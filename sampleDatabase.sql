@@ -1,7 +1,7 @@
 CREATE TABLE SAMPLE (
-    ID INT(10) NOT NULL PRIMARY KEY
-    songName VARCHAR(255)
-    artist VARCHAR(255)
+    ID INT(10) NOT NULL PRIMARY KEY,
+    songName VARCHAR(255),
+    artist VARCHAR(255),
     genre VARCHAR(255)
 );
 

@@ -1,39 +1,46 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import Button from '@mui/material/Button';
 
-class App extends Component {
-state = {
-    data: null
-  };
 
-  componentDidMount() {
-    this.callBackendAPI()
-      .then(res => this.setState({ data: res.express }))
-      .catch(err => console.log(err));
-  }
-    // fetching the GET route from the Express server which matches the GET route from server.js
-  callBackendAPI = async () => {
-    const response = await fetch('/express_backend');
+function App(){
+
+  const [data, setData] = useState([]);
+  const [hasData, setHasData] = useState(false);
+
+  const showData = async () => {
+    const response = await fetch('/check-data');
     const body = await response.json();
 
     if (response.status !== 200) {
       throw Error(body.message) 
     }
+    setData(body);
+    setHasData(true);
+    console.log(body);
     return body;
-  };
+  }
+  ;
 
-  render() {
+  // callBackendAPI = async () => {
+  //   const response = await fetch('/express_backend');
+  //   const body = await response.json();
+
+  //   if (response.status !== 200) {
+  //     throw Error(body.message) 
+  //   }
+  //   return body;
+  // };
+
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">{this.state.data}</p>
+        <Button variant="outlined" style={{margin: 100}} onClick={showData}>Show me the data</Button>
+        <h1>Songs:</h1>
+        <p> {hasData? data.result[0].songName : "" } </p>
+        <p> {hasData? data.result[1].songName : "" } </p>
+        <p> {hasData? data.result[2].songName : "" } </p>
       </div>
     );
-  }
 }
 
 export default App;

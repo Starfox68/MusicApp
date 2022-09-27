@@ -58,3 +58,14 @@ con.connect((err) => {
 app.get('/express_backend', (req, res) => { //Line 9
   res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' }); //Line 10
 }); //Line 11
+
+// get data
+app.get("/check-data", (req, res) => {
+  con.query(
+    `SELECT * FROM SAMPLE`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+});
