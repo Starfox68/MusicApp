@@ -3,6 +3,6 @@ Start a MySQL server on your local environment with username "localhost", passwo
 
 Load the sample database: `mysql -u localhost -p Ilovedatabases < sampleDatabase.sql`
 
-'cd' into the music folder and run 'node server.js'
+'cd' into the musicapp folder and run 'node server.js'
 
-In a new terminal tab in the music folder run 'npm start'
+In a new terminal tab in the musicapp folder run 'npm start'
