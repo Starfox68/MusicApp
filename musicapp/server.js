@@ -43,7 +43,7 @@ app.listen(port, () => console.log(`Listening on port ${port}`)); //Line 6
 
 var con = mysql.createConnection({
     host: "localhost",
-    user: "root",
+    user: "musicUser",
     password: "Ilovedatabases",
     database: "music",
 });
@@ -68,4 +68,10 @@ app.get("/check-data", (req, res) => {
       res.send({ result })
     }
   );
+});
+
+// TODO: add 
+// Playlists
+app.get("/playlist-query", (req, res) => {
+  "test"
 });
