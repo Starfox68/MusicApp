@@ -43,7 +43,7 @@ app.listen(port, () => console.log(`Listening on port ${port}`)); //Line 6
 
 var con = mysql.createConnection({
     host: "localhost",
-    user: "musicUser",
+    user: "root",
     password: "Ilovedatabases",
     database: "music",
 });
