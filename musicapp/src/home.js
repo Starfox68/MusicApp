@@ -8,15 +8,8 @@ import SongBar from './songBar';
 
 function Home(){
 
-  const [data, setData] = useState([]);
-  const [hasData, setHasData] = useState(false);
-
-  const test = [{songName: "Despacito", artist: "Luis Fonsi", genre: "Cringe"},
-  {songName: "Fortnite", artist: "Test", genre: "LOL"},
-  {songName: "monkey", artist: "noises", genre: "loud"},
-  {songName: "yeo", artist: "dis a", genre: "test"}]
-
-  const allSongs = test.map((song) =><SongBar name={song.songName} artist={song.artist} genre={song.genre}></SongBar>)
+  const [allSongs, setAllSongs] = useState('');
+  
   
   const showData = async () => {
     const response = await fetch('/check-data');
@@ -26,10 +19,7 @@ function Home(){
       throw Error(body.message) 
     }
   
-    setData(body);
-    setHasData(true);
-    console.log(body);
-    return body;
+    setAllSongs(body.result.map((song) =><SongBar name={song.songName} artist={song.artist} genre={song.genre}></SongBar>))
   };
 
     return (
@@ -38,8 +28,6 @@ function Home(){
         <Button variant="outlined" style={{margin: 100}} onClick={showData}>Show me the data</Button>
         <h1>Songs:</h1>
         {<div>{allSongs}</div>}
-        
-
       </div>
     );
 }
