@@ -11,19 +11,15 @@ import Divider from '@mui/material/Divider';
 
 
 
-function songBar({name, artist, genre}){
+function songBar({title, releaseDate}){
     return (
         <Grid container alignItems="center" style={{backgroundColor: '#D3D3D3', padding: 10, margin: 10}}>
           <Grid item>
-            <Typography>{name}</Typography>
+            <Typography>{title}</Typography>
           </Grid>
           <Divider orientation="vertical" flexItem style={{margin: 10}}/>
           <Grid item style={{padding: 10}}>
-            <Typography>{artist}</Typography>
-          </Grid>
-          <Divider orientation="vertical" flexItem style={{margin: 10}}/>
-          <Grid item>
-            <Typography>{genre}</Typography>
+            <Typography>{releaseDate}</Typography>
           </Grid>
         </Grid>
     );

@@ -34,7 +34,13 @@ app.listen(3001, () => {
 
 
 const express = require('express'); //Line 1
+const cors = require('cors')
 const app = express(); //Line 2
+
+app.use(cors())
+app.use(express.json())
+
+
 const port = process.env.PORT || 5001; //Line 3
 var mysql = require("mysql");
 
@@ -60,9 +66,11 @@ app.get('/express_backend', (req, res) => { //Line 9
 }); //Line 11
 
 // get data
-app.get("/check-data", (req, res) => {
+app.post("/check-data", (req, res) => {
+  const givenTitle = req.body?.songTitle
   con.query(
-    `SELECT * FROM SAMPLE`,
+    `SELECT * FROM Song WHERE title='${givenTitle}'`,
+    // `SELECT * FROM SAMPLE WHERE SAMPLE.songName='${givenTitle}';`,
     function (err, result, fields) {
       if (err) throw err;
       res.send({ result })
