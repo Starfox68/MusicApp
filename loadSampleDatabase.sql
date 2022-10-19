@@ -10,3 +10,11 @@ INSERT INTO Song VALUES (2, "Cyanide", "https://t2.genius.com/unsafe/327x327/htt
 INSERT INTO Artist VALUES(2, "Daniel Caeser");
 
 INSERT INTO SongAuthor VALUES(2, 2);
+
+INSERT INTO User VALUES ("user1", "password1");
+INSERT INTO User VALUES ("user2", "password2");
+
+INSERT INTO Playlist VALUES ("user1", 1, "coolsongs", "2022-10-19");
+
+INSERT INTO PlaylistSong VALUES (1, 1, "user1");
+
