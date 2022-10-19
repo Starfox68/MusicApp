@@ -11,10 +11,18 @@ INSERT INTO Artist VALUES(2, "Daniel Caeser");
 
 INSERT INTO SongAuthor VALUES(2, 2);
 
+INSERT INTO Song VALUES (3, "Despacito2", "https://t2.genius.com/unsafe/307x307/https%3A%2F%2Fimages.genius.com%2Fd01f15b3cec316f3baef2fb637ef8305.1000x1000x1.jpg", "2017-1-13", "Tú, tú eres el imán y yo soy el metal. Me voy acercando y voy armando el plan. Sólo con pensarlo se acelera el pulso (¡Oh, yeah!)");
+INSERT INTO SongAuthor VALUES (3,1);
+
+
 INSERT INTO User VALUES ("user1", "password1");
 INSERT INTO User VALUES ("user2", "password2");
 
 INSERT INTO Playlist VALUES ("user1", 1, "coolsongs", "2022-10-19");
 
 INSERT INTO PlaylistSong VALUES (1, 1, "user1");
+
+INSERT INTO SongLike VALUES(1,"user1");
+INSERT INTO SongLike VALUES(1,"user2");
+INSERT INTO SongLike VALUES(3, "user1");
 
