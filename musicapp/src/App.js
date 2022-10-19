@@ -1,44 +1,40 @@
 import React, { useState } from 'react';
 import './App.css';
-import Button from '@mui/material/Button';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link
+} from "react-router-dom";
+import Home from './home';
+import User from './User';
+
 
 
 function App(){
 
-  const [data, setData] = useState([]);
-  const [hasData, setHasData] = useState(false);
-
-  const showData = async () => {
-    const response = await fetch('/check-data');
-    const body = await response.json();
-
-    if (response.status !== 200) {
-      throw Error(body.message) 
-    }
-    setData(body);
-    setHasData(true);
-    console.log(body);
-    return body;
-  }
-  ;
-
-  // callBackendAPI = async () => {
-  //   const response = await fetch('/express_backend');
-  //   const body = await response.json();
-
-  //   if (response.status !== 200) {
-  //     throw Error(body.message) 
-  //   }
-  //   return body;
-  // };
-
     return (
       <div className="App">
-        <Button variant="outlined" style={{margin: 100}} onClick={showData}>Show me the data</Button>
-        <h1>Songs:</h1>
-        <p> {hasData? data.result[0].songName : "" } </p>
-        <p> {hasData? data.result[1].songName : "" } </p>
-        <p> {hasData? data.result[2].songName : "" } </p>
+
+<Router>
+      <div>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/users">Users</Link>
+            </li>
+          </ul>
+        </nav>
+
+        <Routes>
+          <Route path='/users' element={<User />} />
+          <Route path='/' element={<Home />} />
+        </Routes>
+      </div>
+    </Router>
       </div>
     );
 }
