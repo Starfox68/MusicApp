@@ -29,8 +29,8 @@ CREATE TABLE SongAuthor (
 
 CREATE TABLE AlbumAuthor (
     albumID INTEGER NOT NULL,
-    artistID INTEGER NOT NULL,
-    PRIMARY KEY (albumID, artistID),
+    artistID I  NTEGER NOT NULL,
+    PRIMARY KEY (albumID),
     FOREIGN KEY (albumID) REFERENCES Album(albumID),
     FOREIGN KEY (artistID) REFERENCES Artist(artistID)
 );
