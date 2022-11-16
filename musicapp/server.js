@@ -49,7 +49,7 @@ app.listen(port, () => console.log(`Listening on port ${port}`)); //Line 6
 
 var con = mysql.createConnection({
     host: "localhost",
-    user: "musicUser",
+    user: "root",
     password: "Ilovedatabases",
     database: "music",
 });
@@ -71,6 +71,20 @@ app.post("/check-data", (req, res) => {
   con.query(
     `SELECT * FROM Song WHERE title='${givenTitle}'`,
     // `SELECT * FROM SAMPLE WHERE SAMPLE.songName='${givenTitle}';`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+});
+
+//verify username and password
+app.post("/check-login", (req, res) => {
+  const givenUsername = req.body?.username
+  const givenPassword = req.body?.password
+  // INSERT INTO User VALUES ("user1", "password1");
+  con.query(
+    `SELECT * FROM User WHERE username='${givenUsername}' AND password='${givenPassword}'`,
     function (err, result, fields) {
       if (err) throw err;
       res.send({ result })
