@@ -4,10 +4,11 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link
 } from "react-router-dom";
 import Home from './home';
 import User from './User';
+import LoginScreen from './loginScreen';
+import CreateUserScreen from './createUserScreen';
 
 
 
@@ -15,26 +16,14 @@ function App(){
 
     return (
       <div className="App">
-
-<Router>
-      <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/users">Users</Link>
-            </li>
-          </ul>
-        </nav>
-
-        <Routes>
-          <Route path='/users' element={<User />} />
-          <Route path='/' element={<Home />} />
-        </Routes>
-      </div>
-    </Router>
+        <Router>
+          <Routes>
+            <Route path='/users' element={<User />} />
+            <Route path='/home' element={<Home />} />
+            <Route path='/create' element={<CreateUserScreen />} />
+            <Route path='/' element={<LoginScreen />} />
+          </Routes>
+        </Router>
       </div>
     );
 }

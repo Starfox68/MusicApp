@@ -49,7 +49,7 @@ app.listen(port, () => console.log(`Listening on port ${port}`)); //Line 6
 
 var con = mysql.createConnection({
     host: "localhost",
-    user: "musicUser",
+    user: "root",
     password: "Ilovedatabases",
     database: "music",
 });
@@ -77,6 +77,37 @@ app.post("/search-song-title", (req, res) => {
     function (err, result, fields) {
       if (err) throw err;
       res.send({ result })
+    }
+  );
+});
+
+//verify username and password
+app.post("/check-login", (req, res) => {
+  const givenUsername = req.body?.username
+  const givenPassword = req.body?.password
+  // INSERT INTO User VALUES ("user1", "password1");
+  con.query(
+    `SELECT * FROM User WHERE username='${givenUsername}' AND password='${givenPassword}'`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+});
+
+//verify username and password
+app.post("/make-new-user", (req, res) => {
+  const givenUsername = req.body?.username
+  const givenPassword = req.body?.password
+  const givenFName = req.body?.firstName
+  const givenLName = req.body?.lastName
+
+  // INSERT INTO User VALUES ("user1", "password1");
+  con.query(
+    `INSERT INTO User VALUES ('${givenUsername}', '${givenPassword}')`,
+    function (err, result, fields) {
+      if (err) res.send("ERROR");
+      else res.send("SUCCESS")
     }
   );
 });
