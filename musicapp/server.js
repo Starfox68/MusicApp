@@ -66,10 +66,13 @@ app.get('/express_backend', (req, res) => { //Line 9
 }); //Line 11
 
 // get data
-app.post("/check-data", (req, res) => {
+app.post("/search-song-title", (req, res) => {
   const givenTitle = req.body?.songTitle
+  const query = (givenTitle) ? 
+  `SELECT * FROM Song WHERE title='${givenTitle}'` : 
+  `SELECT * FROM Song`;
   con.query(
-    `SELECT * FROM Song WHERE title='${givenTitle}'`,
+    query,
     // `SELECT * FROM SAMPLE WHERE SAMPLE.songName='${givenTitle}';`,
     function (err, result, fields) {
       if (err) throw err;

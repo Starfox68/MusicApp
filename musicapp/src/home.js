@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -12,9 +12,12 @@ function Home(){
   const [allSongs, setAllSongs] = useState('');
   const [searchText, setSearchText] = useState('');
   
-  
-  const showData = async () => {
-    axios.post('http://localhost:5001/check-data', {
+  useEffect(() => {
+    songTitleSearch()
+  }, []);
+
+  const songTitleSearch = async () => {
+    axios.post('http://localhost:5001/search-song-title', {
       songTitle: searchText
     }).then((response) => {
       const body = response.data;
@@ -24,16 +27,16 @@ function Home(){
 
   const handleSearchTextChange = e => {
     setSearchText(e.target.value);
-};
+  };
 
-    return (
-      <div className="App">
-        <TextField id="outlined-basic" label="Search" variant="outlined" value={searchText} onChange={handleSearchTextChange} />
-        <Button variant="outlined" style={{margin: 100}} onClick={showData}>Search Song Title</Button>
-        <h1>Songs:</h1>
-        {<div>{allSongs}</div>}
-      </div>
-    );
+  return (
+    <div className="App">
+      <TextField id="outlined-basic" label="Search" variant="outlined" value={searchText} onChange={handleSearchTextChange} />
+      <Button variant="outlined" style={{margin: 100}} onClick={songTitleSearch}>Search Song Title</Button>
+      <h1>Songs:</h1>
+      {<div>{allSongs}</div>}
+    </div>
+  );
 }
 
 export default Home;
