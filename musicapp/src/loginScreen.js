@@ -34,7 +34,7 @@ function LoginScreen(){
                 setShowError(true)
             }else{
                 setShowError(false)
-                navigate('/home')
+                navigate('/home', {state: {username: response.data.result[0].username}})
             }
         })
       };

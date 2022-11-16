@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/Starfox68/MusicApp#readme",
   "dependencies": {
+    "@material-ui/icons": "^4.11.3",
+    "@mui/icons-material": "^5.10.14",
     "cors": "^2.8.5",
     "express": "^4.18.1",
     "material-ui": "^1.0.0-beta.47"
