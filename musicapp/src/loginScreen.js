@@ -3,13 +3,9 @@ import './App.css';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 
 
@@ -29,7 +25,7 @@ function LoginScreen(){
 
     const navigate = useNavigate();
 
-    const showData = async () => {
+    const validateLogin = async () => {
         axios.post('http://localhost:5001/check-login', {
             username: username,
             password: password
@@ -43,14 +39,18 @@ function LoginScreen(){
         })
       };
 
+      const createNavigation = async () => {
+        navigate('/create')
+      };
 
     return (
         <Box sx={{ width: '20%' }}>
             <Stack spacing={2}>
                 <TextField id="outlined-basic" label="Username" variant="outlined" value={username} onChange={handleUsernameChange}/>
                 <TextField id="outlined-basic" label="Password" variant="outlined" value={password} onChange={handlePasswordChange}/>
-                <Button variant="outlined" style={{margin: 10}} onClick={showData}>Login!</Button>
+                <Button variant="outlined" style={{margin: 10}} onClick={validateLogin}>Login!</Button>
                 {showError? <Typography color={"#FF0000"}> Enter a valid login </Typography> : <Typography color={"#FFFFFF"}> Enter a valid login </Typography>}
+                <Button variant="outlined" style={{margin: 10}} onClick={createNavigation}>Create User</Button>
             </Stack>
         </Box>
     );

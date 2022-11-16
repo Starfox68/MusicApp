@@ -92,6 +92,23 @@ app.post("/check-login", (req, res) => {
   );
 });
 
+//verify username and password
+app.post("/make-new-user", (req, res) => {
+  const givenUsername = req.body?.username
+  const givenPassword = req.body?.password
+  const givenFName = req.body?.firstName
+  const givenLName = req.body?.lastName
+
+  // INSERT INTO User VALUES ("user1", "password1");
+  con.query(
+    `INSERT INTO User VALUES ('${givenUsername}', '${givenPassword}')`,
+    function (err, result, fields) {
+      if (err) res.send("ERROR");
+      else res.send("SUCCESS")
+    }
+  );
+});
+
 // TODO: add 
 // Playlists
 app.get("/playlist-query", (req, res) => {

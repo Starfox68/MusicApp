@@ -4,11 +4,11 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link
 } from "react-router-dom";
 import Home from './home';
 import User from './User';
 import LoginScreen from './loginScreen';
+import CreateUserScreen from './createUserScreen';
 
 
 
@@ -20,6 +20,7 @@ function App(){
           <Routes>
             <Route path='/users' element={<User />} />
             <Route path='/home' element={<Home />} />
+            <Route path='/create' element={<CreateUserScreen />} />
             <Route path='/' element={<LoginScreen />} />
           </Routes>
         </Router>
