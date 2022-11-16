@@ -35,3 +35,24 @@ FROM (
 ) as songIDs, SongAuthor, Artist
 WHERE songIDs.songID=SongAuthor.songID
 AND SongAuthor.artistID = Artist.artistID;
+
+-- feature 5
+WITH mutualLikedSongs AS
+    (SELECT Song.songID FROM SongLike, Song
+    WHERE username="user1" AND Song.songID=SongLike.songID
+    INTERSECT
+    SELECT Song.songID FROM SongLike, Song
+    WHERE username="user2" AND Song.songID=SongLike.songID)
+SELECT COUNT(songID) as numMutualLikedSongs FROM mutualLikedSongs;
+
+-- feature 6
+DELETE FROM SongLike 
+WHERE username="user1" AND songID=1;
+
+WITH mutualLikedSongs AS -- display mutual songs after removing a like from one of the songs
+    (SELECT Song.songID FROM SongLike, Song
+    WHERE username="user1" AND Song.songID=SongLike.songID
+    INTERSECT
+    SELECT Song.songID FROM SongLike, Song
+    WHERE username="user2" AND Song.songID=SongLike.songID)
+SELECT COUNT(songID) as numMutualLikedSongs FROM mutualLikedSongs;
