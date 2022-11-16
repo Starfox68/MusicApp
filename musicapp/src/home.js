@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import SongBar from './songBar';
 import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 
 
 
@@ -11,6 +12,9 @@ function Home(){
 
   const [allSongs, setAllSongs] = useState('');
   const [searchText, setSearchText] = useState('');
+
+  const {state} = useLocation();
+  const { username } = state;
   
   useEffect(() => {
     songTitleSearch()
