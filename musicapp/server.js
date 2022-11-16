@@ -49,7 +49,7 @@ app.listen(port, () => console.log(`Listening on port ${port}`)); //Line 6
 
 var con = mysql.createConnection({
     host: "localhost",
-    user: "root",
+    user: "musicUser",
     password: "Ilovedatabases",
     database: "music",
 });
@@ -67,10 +67,19 @@ app.get('/express_backend', (req, res) => { //Line 9
 
 // get data
 app.post("/search-song-title", (req, res) => {
-  const givenTitle = req.body?.songTitle
-  const query = (givenTitle) ? 
-  `SELECT * FROM Song WHERE title='${givenTitle}'` : 
-  `SELECT * FROM Song`;
+  const songTitle = req.body?.songTitle
+  const username = req.body?.username
+
+  const query = (songTitle) ? 
+  `SELECT title, releaseDate, TotalLikes, UserLikes
+  FROM Song LEFT OUTER JOIN (
+      SELECT songID, count(songID) as TotalLikes, SUM(CASE WHEN SongLike.username='${username}' THEN 1 ELSE 0 END) as UserLikes
+      FROM SongLike
+      GROUP BY songID
+  ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
+  WHERE title='${songTitle}';` : 
+  `SELECT title, releaseDate, count(SongLike.songID) as TotalLikes, SUM(CASE WHEN SongLike.username='${username}' THEN 1 ELSE 0 END) as UserLikes
+  FROM Song LEFT OUTER JOIN SongLike ON Song.songID = SongLike.songID`;  
   con.query(
     query,
     // `SELECT * FROM SAMPLE WHERE SAMPLE.songName='${givenTitle}';`,

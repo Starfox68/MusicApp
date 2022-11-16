@@ -18,10 +18,13 @@ function Home(){
 
   const songTitleSearch = async () => {
     axios.post('http://localhost:5001/search-song-title', {
-      songTitle: searchText
+      songTitle: searchText,
+      username: "user1" // TODO
     }).then((response) => {
       const body = response.data;
-      setAllSongs(body.result.map((song) =><SongBar title={song.title} releaseDate={song.releaseDate}></SongBar>))
+      console.log(body)
+      setAllSongs(body.result.map((song) =>
+      <SongBar title={song.title} releaseDate={song.releaseDate} likes={song.totalLikes} userLikes={song.userLikes}></SongBar>))
     })
   };
 
