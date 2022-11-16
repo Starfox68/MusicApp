@@ -1,7 +1,11 @@
 -- feature 1
-SELECT title, releaseDate, count(SongLike.songID) as TotalLikes, SUM(CASE WHEN SongLike.username="user1" THEN 1 ELSE 0 END) as UserLikes
-FROM Song, SongLike
-WHERE title="Despacito" AND SongLike.songID=Song.songID;
+SELECT title, releaseDate, TotalLikes, UserLikes
+FROM Song LEFT OUTER JOIN (
+    SELECT songID, count(songID) as TotalLikes, SUM(CASE WHEN SongLike.username="user1" THEN 1 ELSE 0 END) as UserLikes
+    FROM SongLike
+    GROUP BY songID
+) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
+WHERE title="Despacito";
 
 -- feature 2
 SELECT artistID, count(songlike.songID) as artistSongLikes
