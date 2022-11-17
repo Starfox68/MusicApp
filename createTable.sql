@@ -5,7 +5,7 @@ CREATE TABLE Song (
     songID INTEGER NOT NULL PRIMARY KEY,
     title VARCHAR(255),
     imageURL VARCHAR(255),
-    releaseDate DATE,
+    releaseDate VARCHAR(255),
     lyrics TEXT
 );
 
