@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import Button from '@mui/material/Button';
+import ToggleButton from '@mui/material/ToggleButton';
 import TextField from '@mui/material/TextField';
 import SongBar from './songBar';
 import axios from 'axios';
@@ -11,11 +12,15 @@ function Home(){
 
   // State Variables
   const [allSongs, setAllSongs] = useState([]);
+  const [displayedSongs, setDisplayedSongs] = useState([])
+
   const [searchText, setSearchText] = useState('');
 
   const {state} = useLocation();
   const {username} = state;
   
+  const [sorted, setSorted] = useState(false)
+
   // Load all songs on app launch
   useEffect(() => {
     songTitleSearch() 
@@ -49,12 +54,24 @@ function Home(){
     setSearchText(e.target.value);
   };
 
+  // if sorted=true, sort allSongs by likes field
   return (
     <div className="App">
       <TextField id="outlined-basic" label="Search" variant="outlined" value={searchText} onChange={handleSearchTextChange} />
       <Button variant="outlined" style={{margin: 100}} onClick={songTitleSearch}>Search Song Title</Button>
       <h1>Songs:</h1>
-      {<div>{allSongs}</div>}
+      <ToggleButton 
+        variant="outlined" 
+        selected={sorted}
+        onChange={() => {
+          setSorted(!sorted)
+          setDisplayedSongs(allSongs.slice(0).sort((s1, s2) => s2.props.likes - s1.props.likes))
+        }}
+        >
+          sort
+      </ToggleButton>
+      {sorted == false && <div>{allSongs}</div>}
+      {sorted == true && <div>{displayedSongs}</div>}
     </div>
   );
 }
