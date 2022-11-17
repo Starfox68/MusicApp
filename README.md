@@ -30,3 +30,5 @@ In a new terminal tab in the musicapp folder run 'npm start'
 2. Searching for songs by song title
 3. Liking songs and viewing total song likes from other users
 4. Sorting songs by song likes
+
+The features are primarily implemented in /musicapp/src. home.js, loginScreen.js, User.js, and songBar.js contain the front end code for most features, and server.js in /musicapp contains the backend code and sql queries for the features
