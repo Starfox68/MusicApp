@@ -7,13 +7,14 @@ FROM Song LEFT OUTER JOIN (
     FROM SongLike
     GROUP BY songID
 ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
-WHERE title="Despacito";
+WHERE title="Cash Up";
 
 -- feature 2
 SELECT artistID, count(songlike.songID) as artistSongLikes
 FROM songauthor
 LEFT OUTER JOIN songlike ON songauthor.songID=songlike.songID
-GROUP BY artistID;
+GROUP BY artistID
+LIMIT 100;
 
 -- feature 3
 SELECT songIDs.title, Artist.name
@@ -29,9 +30,10 @@ AND SongAuthor.artistID = Artist.artistID;
 
 -- feature 4
 INSERT INTO PlaylistSong (SongID, PlaylistID, Username)
-VALUES (2, 1, "user1");
+VALUES (901707, 1, "user1");
 
-SELECT songIDs.title, Artist.name -- display user1's playlist using feature 3 after adding song
+-- display user1's playlist using feature 3 after adding song
+SELECT songIDs.title, Artist.name
 FROM (
     SELECT Song.songID, title
     FROM PlaylistSong, Song
