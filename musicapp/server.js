@@ -79,7 +79,7 @@ app.post("/search-song-title", (req, res) => {
   WHERE title='${songTitle}';` : 
   `SELECT Song.songID as songID, title, releaseDate, totalLikes, userLikes
   FROM Song LEFT OUTER JOIN (
-      SELECT songID, count(songID) as totalLikes, SUM(CASE WHEN SongLike.username="user1" THEN 1 ELSE 0 END) as userLikes
+      SELECT songID, count(songID) as totalLikes, SUM(CASE WHEN SongLike.username='${username}' THEN 1 ELSE 0 END) as userLikes
       FROM SongLike
       GROUP BY songID
   ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID`;  

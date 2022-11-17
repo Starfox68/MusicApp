@@ -10,7 +10,7 @@ import { useLocation } from 'react-router-dom';
 function Home(){
 
   // State Variables
-  const [allSongs, setAllSongs] = useState('');
+  const [allSongs, setAllSongs] = useState([]);
   const [searchText, setSearchText] = useState('');
 
   const {state} = useLocation();
@@ -27,8 +27,11 @@ function Home(){
       username: username
     }).then((response) => {
       const body = response.data;
-      console.log(body)
-      setAllSongs([])
+      allSongs.length = 0
+
+      const temp = []
+      setAllSongs(temp)
+
       setAllSongs(body.result.map((song) =>
         <SongBar 
           songID={song.songID}

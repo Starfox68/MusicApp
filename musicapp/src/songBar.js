@@ -12,9 +12,10 @@ function SongBar({songID, title, releaseDate, likes, username, userLikes}){
   const [likeCount, setLikeCount] = useState(likes);
   const [selected, setSelected] = useState(userLikes);
 
-  // useEffect(() => {
-
-  // });
+  useEffect(() => {
+    setLikeCount(likes)
+    setSelected(userLikes)
+  }, [likes, userLikes]);
 
   const likeSong = async () => {
     axios.post('http://localhost:5001/like-song', {
