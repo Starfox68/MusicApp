@@ -40,7 +40,6 @@ const app = express(); //Line 2
 app.use(cors())
 app.use(express.json())
 
-
 const port = process.env.PORT || 5001; //Line 3
 var mysql = require("mysql");
 
@@ -65,20 +64,20 @@ app.get('/express_backend', (req, res) => { //Line 9
   res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' }); //Line 10
 }); //Line 11
 
-// get data
+// Search for a song title
 app.post("/search-song-title", (req, res) => {
   const songTitle = req.body?.songTitle
   const username = req.body?.username
 
   const query = (songTitle) ? 
-  `SELECT title, releaseDate, totalLikes, userLikes
+  `SELECT Song.songID as songID, title, releaseDate, totalLikes, userLikes
   FROM Song LEFT OUTER JOIN (
       SELECT songID, count(songID) as totalLikes, SUM(CASE WHEN SongLike.username='${username}' THEN 1 ELSE 0 END) as userLikes
       FROM SongLike
       GROUP BY songID
   ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
   WHERE title='${songTitle}';` : 
-  `SELECT title, releaseDate, totalLikes, userLikes
+  `SELECT Song.songID as songID, title, releaseDate, totalLikes, userLikes
   FROM Song LEFT OUTER JOIN (
       SELECT songID, count(songID) as totalLikes, SUM(CASE WHEN SongLike.username="user1" THEN 1 ELSE 0 END) as userLikes
       FROM SongLike
@@ -86,7 +85,6 @@ app.post("/search-song-title", (req, res) => {
   ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID`;  
   con.query(
     query,
-    // `SELECT * FROM SAMPLE WHERE SAMPLE.songName='${givenTitle}';`,
     function (err, result, fields) {
       if (err) throw err;
       res.send({ result })
@@ -94,7 +92,20 @@ app.post("/search-song-title", (req, res) => {
   );
 });
 
-//verify username and password
+// Like/unlike a song
+app.post("/like-song", (req, res) => {
+  const songID = req.body?.songID
+  const username = req.body?.username
+  const liked = req.body?.selected
+
+  const query = (liked) ?
+  `INSERT INTO SongLike VALUES(${songID}, '${username}')` :
+  `DELETE FROM SongLike WHERE SongLike.songID = ${songID} AND SongLike.username = '${username}'`;
+
+  con.query(query);
+});
+
+// Verify username and password
 app.post("/check-login", (req, res) => {
   const givenUsername = req.body?.username
   const givenPassword = req.body?.password

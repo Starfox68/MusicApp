@@ -5,19 +5,24 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import ToggleButton from '@mui/material/ToggleButton';
 import CheckIcon from '@mui/icons-material/Check'; 
+import axios from 'axios';
 
-function SongBar({title, releaseDate, likes, userLikes}){
-  const [selected, setSelected] = useState(false);
+function SongBar({songID, title, releaseDate, likes, username, userLikes}){
 
-  useEffect(() => {
-    console.log("ANYTHING")
-    if (userLikes === 1) {
-      // console.log("WORKS")
-      setSelected(true)
-    } else {
-      setSelected(false)
-    }
-  }, []);
+  const [likeCount, setLikeCount] = useState(likes);
+  const [selected, setSelected] = useState(userLikes);
+
+  // useEffect(() => {
+
+  // });
+
+  const likeSong = async () => {
+    axios.post('http://localhost:5001/like-song', {
+      selected: !selected,
+      songID: songID,
+      username: username
+    })
+  }
 
   return (
     <Grid container alignItems="center" style={{backgroundColor: '#b2c8eb', padding: 10, margin: 10}}>
@@ -30,7 +35,7 @@ function SongBar({title, releaseDate, likes, userLikes}){
       </Grid>
       <Divider orientation="vertical" flexItem style={{margin: 10}}/>
       <Grid item>
-        <Typography>{(likes) ? likes : 0}</Typography>
+        <Typography>{likeCount}</Typography>
       </Grid>
       <Divider orientation="vertical" flexItem style={{margin: 10}}/>
       <Grid item>
@@ -38,7 +43,9 @@ function SongBar({title, releaseDate, likes, userLikes}){
           value="check"
           selected={selected}
           onChange={() => {
-            setSelected(!selected);
+            setSelected(!selected) 
+            likeSong()
+            setLikeCount(likeCount + ((selected) ? -1 : 1))
           }}
         >
         <CheckIcon/>
