@@ -82,7 +82,8 @@ app.post("/search-song-title", (req, res) => {
       SELECT songID, count(songID) as totalLikes, SUM(CASE WHEN SongLike.username='${username}' THEN 1 ELSE 0 END) as userLikes
       FROM SongLike
       GROUP BY songID
-  ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID`;  
+  ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
+  LIMIT 100`;  
   con.query(
     query,
     function (err, result, fields) {
