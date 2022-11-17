@@ -30,7 +30,7 @@ function SongBar({title, releaseDate, likes, userLikes}){
       </Grid>
       <Divider orientation="vertical" flexItem style={{margin: 10}}/>
       <Grid item>
-        <Typography>{likes}</Typography>
+        <Typography>{(likes) ? likes : 0}</Typography>
       </Grid>
       <Divider orientation="vertical" flexItem style={{margin: 10}}/>
       <Grid item>

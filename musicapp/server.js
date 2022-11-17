@@ -71,15 +71,19 @@ app.post("/search-song-title", (req, res) => {
   const username = req.body?.username
 
   const query = (songTitle) ? 
-  `SELECT title, releaseDate, TotalLikes, UserLikes
+  `SELECT title, releaseDate, totalLikes, userLikes
   FROM Song LEFT OUTER JOIN (
-      SELECT songID, count(songID) as TotalLikes, SUM(CASE WHEN SongLike.username='${username}' THEN 1 ELSE 0 END) as UserLikes
+      SELECT songID, count(songID) as totalLikes, SUM(CASE WHEN SongLike.username='${username}' THEN 1 ELSE 0 END) as userLikes
       FROM SongLike
       GROUP BY songID
   ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
   WHERE title='${songTitle}';` : 
-  `SELECT title, releaseDate, count(SongLike.songID) as TotalLikes, SUM(CASE WHEN SongLike.username='${username}' THEN 1 ELSE 0 END) as UserLikes
-  FROM Song LEFT OUTER JOIN SongLike ON Song.songID = SongLike.songID`;  
+  `SELECT title, releaseDate, totalLikes, userLikes
+  FROM Song LEFT OUTER JOIN (
+      SELECT songID, count(songID) as totalLikes, SUM(CASE WHEN SongLike.username="user1" THEN 1 ELSE 0 END) as userLikes
+      FROM SongLike
+      GROUP BY songID
+  ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID`;  
   con.query(
     query,
     // `SELECT * FROM SAMPLE WHERE SAMPLE.songName='${givenTitle}';`,
