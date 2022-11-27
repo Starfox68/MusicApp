@@ -5,26 +5,29 @@ import ToggleButton from '@mui/material/ToggleButton';
 import TextField from '@mui/material/TextField';
 import SongBar from './songBar';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // Main search page
 function Home(){
 
   // State Variables
   const [allSongs, setAllSongs] = useState([]);
-  const [displayedSongs, setDisplayedSongs] = useState([])
-
+  const [displayedSongs, setDisplayedSongs] = useState([]);
+  const [sorted, setSorted] = useState(false);
   const [searchText, setSearchText] = useState('');
 
   const {state} = useLocation();
   const {username} = state;
+  const navigate = useNavigate();
   
-  const [sorted, setSorted] = useState(false)
-
-  // Load all songs on app launch
+  // Load all songs on first page load
   useEffect(() => {
     songTitleSearch() 
   }, []);
+
+  const navigateToPlaylists = async() => {
+    navigate('/playlists', {state: {username: username}})
+  }
 
   const songTitleSearch = async () => {
     axios.post('http://localhost:5001/search-song-title', {
@@ -58,6 +61,7 @@ function Home(){
   return (
     <div className="App">
       <TextField id="outlined-basic" label="Search" variant="outlined" value={searchText} onChange={handleSearchTextChange} />
+      <Button variant="outlined" onClick={navigateToPlaylists}>Playlists</Button>
       <Button variant="outlined" style={{margin: 100}} onClick={songTitleSearch}>Search Song Title</Button>
       <h1>Songs:</h1>
       <ToggleButton 
@@ -70,8 +74,8 @@ function Home(){
         >
           sort
       </ToggleButton>
-      {sorted == false && <div>{allSongs}</div>}
-      {sorted == true && <div>{displayedSongs}</div>}
+      {sorted === false && <div>{allSongs}</div>}
+      {sorted === true && <div>{displayedSongs}</div>}
     </div>
   );
 }
