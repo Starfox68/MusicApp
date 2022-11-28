@@ -50,7 +50,7 @@ function LoginScreen(){
                 <Stack spacing={2}>
                     <h1>Welcome</h1>
                     <TextField id="outlined-basic" label="Username" variant="outlined" value={username} onChange={handleUsernameChange}/>
-                    <TextField id="outlined-basic" label="Password" variant="outlined" value={password} onChange={handlePasswordChange}/>
+                    <TextField type="password" id="outlined-basic" label="Password" variant="outlined" value={password} onChange={handlePasswordChange}/>
                     <Button variant="outlined" style={{margin: 10}} onClick={validateLogin}>Login!</Button>
                     {showError? <Typography color={"#FF0000"}> Enter a valid login </Typography> : <Typography color={"#FFFFFF"}> Enter a valid login </Typography>}
                     <Button variant="outlined" style={{margin: 10}} onClick={createNavigation}>Create User</Button>
