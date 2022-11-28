@@ -12,28 +12,41 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import Grid from '@mui/material/Grid';
 import SongBar from './songBar';
-import { ListItemSecondaryAction } from '@mui/material';
+import { Fade, Grow, ListItemSecondaryAction, TextField } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 
 function PlaylistBar({playlistID, name, date, username, refreshPlaylistCallback}) {
 
   const [open, setOpen] = React.useState(false);
+  const [renameValue, setRenameValue] = React.useState(name)
+  const [renameOpen, setRenameOpen] = React.useState(false);
   const [songs, setSongs] = React.useState([])
 
-  let hasOpened = false
+  var hasOpened = false
 
-  const onClick = () => {
-    setOpen(!open);
+  const onCollapseClick = () => {
     if (!hasOpened) {
       hasOpened = true
       songTitleSearch()
     }
   };
 
+  const onRenameChange = e => {
+    setRenameValue(e.target.value);
+  };
+
+  const onRenameClick = () => {
+    setRenameOpen(!renameOpen)
+    if (renameOpen) {
+      renamePlaylist()
+    }
+  }
+
   const renamePlaylist = async() => {
     axios.post('http://localhost:5001/playlist-rename', {
       username: username,
-      playlistID: playlistID
+      playlistID: playlistID,
+      name: renameValue
     }).then((response) => {
       refreshPlaylistCallback()
     })
@@ -54,8 +67,7 @@ function PlaylistBar({playlistID, name, date, username, refreshPlaylistCallback}
       playlistID: playlistID,
     }).then((response) => {
       const body = response.data;
-      console.log(body)
-
+      
       setSongs(body.result.map((song) =>
         <SongBar
           songID={song.songID}
@@ -65,35 +77,38 @@ function PlaylistBar({playlistID, name, date, username, refreshPlaylistCallback}
           userLikes={(song.userLikes === 1) ? true : false}>
         </SongBar>)
       )
+
+      setOpen(!open);
     })
   };
 
   return (
-    <Grid container>
-      <Grid item xs={11}>
-        <ListItemButton onClick={onClick}>
-          <ListItemText primary = {name} secondary = {('Date created: ' + date)}/>
-          {open ? <ExpandLess /> : <ExpandMore />}
-        </ListItemButton>
-        <Collapse in={open}>
-          <div>
-            {songs}
-          </div>
-        </Collapse>
-      </Grid>
-      <Grid item>
-        <IconButton>
-          <EditIcon>
-          </EditIcon>
-        </IconButton>
-      </Grid>
-      <Grid item>
-        <IconButton onClick={deletePlaylist}>
-          <DeleteIcon>
-          </DeleteIcon>
-        </IconButton>
-      </Grid>
-    </Grid>
+    <div>
+      <ListItem>
+        <ListItemText primary = {name} secondary = {('Date created: ' + date)}/>
+        <ListItemSecondaryAction>
+          <Fade in={renameOpen}>
+            <TextField defaultValue={name} onChange={onRenameChange} style={{paddingRight: 10}}>
+            </TextField>
+          </Fade>
+          <IconButton onClick={onRenameClick}>
+            <EditIcon>
+            </EditIcon>
+          </IconButton>
+          <IconButton onClick={deletePlaylist}>
+            <DeleteIcon>
+            </DeleteIcon>
+          </IconButton>
+          {open ? <IconButton onClick={onCollapseClick}><ExpandLess /></IconButton> : 
+            <IconButton onClick={onCollapseClick}><ExpandMore /></IconButton>}
+        </ListItemSecondaryAction>
+      </ListItem>
+      <Collapse in={open}>
+        <div>
+          {songs}
+        </div>
+      </Collapse>
+    </div>
   )
 }
 

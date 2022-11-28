@@ -172,6 +172,20 @@ app.post("/playlist-get-songs", (req, res) => {
   );
 })
 
+app.post("/playlist-rename", (req, res) => {
+  const username = req.body?.username
+  const playlistID = req.body?.playlistID
+  const name = req.body?.name
+
+  con.query(
+    `UPDATE Playlist SET name='${name}' WHERE playlistID='${playlistID}' AND username='${username}';`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+});
+
 app.post("/playlist-create", (req, res) => {
   const username = req.body?.username
 
