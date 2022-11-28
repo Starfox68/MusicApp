@@ -32,7 +32,6 @@ app.listen(3001, () => {
 
 */
 
-
 const express = require('express'); //Line 1
 const cors = require('cors')
 const app = express(); //Line 2
@@ -157,8 +156,91 @@ app.post("/make-new-user", (req, res) => {
   })
 });
 
-// TODO: add 
 // Playlists
-app.get("/playlist-query", (req, res) => {
-  "test"
+
+app.post("/playlist-get", (req, res) => {
+  const username = req.body?.username
+
+  con.query(
+    `SELECT playlistID, name, DATE_FORMAT(dateCreated, '%M %d %Y') AS dateCreated 
+    FROM Playlist WHERE username='${username}';`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+});
+
+app.post("/playlist-get-songs", (req, res) => {
+  const username = req.body?.username
+  const playlistID = req.body?.playlistID
+
+  con.query(
+    `SELECT Song.songID as songID, title, releaseDate, totalLikes, userLikes
+      FROM Song LEFT OUTER JOIN (
+        SELECT songID, count(songID) as totalLikes, SUM(CASE WHEN SongLike.username='${username}' THEN 1 ELSE 0 END) as userLikes
+        FROM SongLike
+        GROUP BY songID
+      ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
+      WHERE Song.songID IN (
+        SELECT songID AS playlistSongID FROM PlaylistSong WHERE playlistID='${playlistID}' AND username='${username}'
+      )`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+})
+
+app.post("/playlist-rename", (req, res) => {
+  const username = req.body?.username
+  const playlistID = req.body?.playlistID
+  const name = req.body?.name
+
+  con.query(
+    `UPDATE Playlist SET name='${name}' WHERE playlistID='${playlistID}' AND username='${username}';`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+});
+
+app.post("/playlist-create", (req, res) => {
+  const username = req.body?.username
+
+  con.query(
+    `INSERT INTO Playlist VALUES('${username}', UUID(), 'New Playlist', curdate())`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+});
+
+app.post("/playlist-add-song", (req, res) => {
+  const username = req.body?.username
+  const playlistID = req.body?.playlistID
+  const songID = req.body?.songID
+
+  con.query(
+    `INSERT INTO PlaylistSong VALUES(${songID}, ${playlistID}, '${username}')`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+});
+
+app.post("/playlist-delete", (req, res) => {
+  const username = req.body?.username
+  const playlistID = req.body?.playlistID
+
+  con.query(
+    `DELETE FROM Playlist WHERE username='${username}' AND playlistID='${playlistID}';`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
 });

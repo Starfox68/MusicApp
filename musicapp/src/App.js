@@ -6,7 +6,7 @@ import {
   Route,
 } from "react-router-dom";
 import Home from './home';
-import User from './User';
+import Playlist from './playlist'
 import LoginScreen from './loginScreen';
 import CreateUserScreen from './createUserScreen';
 
@@ -17,7 +17,7 @@ function App(){
       <div className="App">
         <Router>
           <Routes>
-            <Route path='/users' element={<User />} />
+            <Route path='/playlists' element={<Playlist />} />
             <Route path='/home' element={<Home />} />
             <Route path='/create' element={<CreateUserScreen />} />
             <Route path='/' element={<LoginScreen />} />

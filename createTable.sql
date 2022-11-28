@@ -66,7 +66,7 @@ CREATE TABLE AlbumLike (
 
 CREATE TABLE Playlist (
     username VARCHAR(255) NOT NULL,
-    playlistID INTEGER NOT NULL,
+    playlistID VARCHAR(36) NOT NULL,
     name VARCHAR(255),
     dateCreated DATE,
     PRIMARY KEY (username, playlistID),
@@ -75,9 +75,9 @@ CREATE TABLE Playlist (
 
 CREATE TABLE PlaylistSong (
     songID INTEGER NOT NULL,
-    playlistID INTEGER NOT NULL,
+    playlistID VARCHAR(36) NOT NULL,
     username VARCHAR(255) NOT NULL,
     PRIMARY KEY (songID, playlistID, username),
-    FOREIGN KEY (username, playlistID) REFERENCES Playlist(username, playlistID),
+    FOREIGN KEY (username, playlistID) REFERENCES Playlist(username, playlistID) ON DELETE CASCADE,
     FOREIGN KEY (songID) REFERENCES Song(songID)
 );

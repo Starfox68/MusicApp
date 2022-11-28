@@ -42,6 +42,6 @@ INTO TABLE AlbumAuthor
 FIELDS TERMINATED BY '^'
 LINES TERMINATED BY '\n';
 
-INSERT INTO Playlist VALUES ("user1", 1, "coolsongs", "2022-10-19");
+INSERT INTO Playlist VALUES ("user1", 1, "coolsongs", STR_TO_DATE('15/08/2022', '%d/%m/%Y'));
 
 INSERT INTO PlaylistSong VALUES (843135, 1, "user1");
