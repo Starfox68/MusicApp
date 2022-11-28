@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
+import Grid from '@mui/material/Grid';
 
 
 
@@ -44,15 +45,18 @@ function LoginScreen(){
       };
 
     return (
-        <Box sx={{ width: '20%' }}>
-            <Stack spacing={2}>
-                <TextField id="outlined-basic" label="Username" variant="outlined" value={username} onChange={handleUsernameChange}/>
-                <TextField id="outlined-basic" label="Password" variant="outlined" value={password} onChange={handlePasswordChange}/>
-                <Button variant="outlined" style={{margin: 10}} onClick={validateLogin}>Login!</Button>
-                {showError? <Typography color={"#FF0000"}> Enter a valid login </Typography> : <Typography color={"#FFFFFF"}> Enter a valid login </Typography>}
-                <Button variant="outlined" style={{margin: 10}} onClick={createNavigation}>Create User</Button>
-            </Stack>
-        </Box>
+        <Grid container spacing={2} direction="column" alignItems="center" justifyContent="center">
+            <Box sx={{ width: '20%' }} style={{position: 'relative', top: '100px'}}>
+                <Stack spacing={2}>
+                    <h1>Welcome</h1>
+                    <TextField id="outlined-basic" label="Username" variant="outlined" value={username} onChange={handleUsernameChange}/>
+                    <TextField id="outlined-basic" label="Password" variant="outlined" value={password} onChange={handlePasswordChange}/>
+                    <Button variant="outlined" style={{margin: 10}} onClick={validateLogin}>Login!</Button>
+                    {showError? <Typography color={"#FF0000"}> Enter a valid login </Typography> : <Typography color={"#FFFFFF"}> Enter a valid login </Typography>}
+                    <Button variant="outlined" style={{margin: 10}} onClick={createNavigation}>Create User</Button>
+                </Stack>
+            </Box>
+        </Grid>
     );
 }
 

@@ -36,6 +36,7 @@ app.listen(3001, () => {
 const express = require('express'); //Line 1
 const cors = require('cors')
 const app = express(); //Line 2
+const bcrypt = require('bcrypt');
 
 app.use(cors())
 app.use(express.json())
@@ -48,7 +49,7 @@ app.listen(port, () => console.log(`Listening on port ${port}`)); //Line 6
 
 var con = mysql.createConnection({
     host: "localhost",
-    user: "musicUser",
+    user: "root",
     password: "Ilovedatabases",
     database: "music",
 });
@@ -58,6 +59,9 @@ con.connect((err) => {
     if (err) throw err;
     console.log("Mysql Connected...");
 });
+
+//for encryption
+const saltRounds = 10;
 
 // create a GET route
 app.get('/express_backend', (req, res) => { //Line 9
@@ -110,31 +114,47 @@ app.post("/like-song", (req, res) => {
 app.post("/check-login", (req, res) => {
   const givenUsername = req.body?.username
   const givenPassword = req.body?.password
-  // INSERT INTO User VALUES ("user1", "password1");
+
+  // User VALUES ("user1", "password1");
   con.query(
-    `SELECT * FROM User WHERE username='${givenUsername}' AND password='${givenPassword}'`,
+    `SELECT * FROM User WHERE username='${givenUsername}'`,
     function (err, result, fields) {
       if (err) throw err;
-      res.send({ result })
+
+    bcrypt.compare(givenPassword, result[0].password, function(err, answer){
+      if (answer){
+        res.send({ result })
+      }else{
+        res.send({result: []})
+      }
+    })
     }
   );
 });
 
-//verify username and password
+//Create new username and password
 app.post("/make-new-user", (req, res) => {
   const givenUsername = req.body?.username
   const givenPassword = req.body?.password
-  const givenFName = req.body?.firstName
-  const givenLName = req.body?.lastName
+  // const givenFName = req.body?.firstName
+  // const givenLName = req.body?.lastName
 
-  // INSERT INTO User VALUES ("user1", "password1");
-  con.query(
-    `INSERT INTO User VALUES ('${givenUsername}', '${givenPassword}')`,
-    function (err, result, fields) {
-      if (err) res.send("ERROR");
-      else res.send("SUCCESS")
-    }
-  );
+
+  var hashedPassword = givenPassword;
+  bcrypt.genSalt(saltRounds, function(err, salt){
+    bcrypt.hash(givenPassword, salt, function(err, hash){
+      hashedPassword = hash  
+
+      // INSERT INTO User VALUES ("user1", "password1");
+      con.query(
+        `INSERT INTO User VALUES ('${givenUsername}', '${hashedPassword}')`,
+        function (err, result, fields) {
+          if (err) res.send("ERROR");
+          else res.send("SUCCESS")
+        }
+      );
+    })
+  })
 });
 
 // TODO: add 
