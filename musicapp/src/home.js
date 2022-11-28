@@ -70,8 +70,7 @@ function Home(){
         onChange={() => {
           setSorted(!sorted)
           setDisplayedSongs(allSongs.slice(0).sort((s1, s2) => s2.props.likes - s1.props.likes))
-        }}
-        >
+        }}>
           sort
       </ToggleButton>
       {sorted === false && <div>{allSongs}</div>}

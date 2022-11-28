@@ -174,10 +174,9 @@ app.post("/playlist-get-songs", (req, res) => {
 
 app.post("/playlist-create", (req, res) => {
   const username = req.body?.username
-  const playlistName = req.body?.playlistName
 
   con.query(
-    `INSERT INTO Playlist VALUES('${username}', UUID(), '${playlistName}', curdate())`,
+    `INSERT INTO Playlist VALUES('${username}', UUID(), 'New Playlist', curdate())`,
     function (err, result, fields) {
       if (err) throw err;
       res.send({ result })
@@ -185,7 +184,7 @@ app.post("/playlist-create", (req, res) => {
   );
 });
 
-app.post("playlist-add-song", (req, res) => {
+app.post("/playlist-add-song", (req, res) => {
   const username = req.body?.username
   const playlistID = req.body?.playlistID
   const songID = req.body?.songID
@@ -199,11 +198,12 @@ app.post("playlist-add-song", (req, res) => {
   );
 });
 
-app.post("playlist-delete-playlist", (req, res) => {
+app.post("/playlist-delete", (req, res) => {
   const username = req.body?.username
+  const playlistID = req.body?.playlistID
 
   con.query(
-    '',
+    `DELETE FROM Playlist WHERE username='${username}' AND playlistID='${playlistID}';`,
     function (err, result, fields) {
       if (err) throw err;
       res.send({ result })

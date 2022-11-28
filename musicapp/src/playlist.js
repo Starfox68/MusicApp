@@ -3,13 +3,15 @@ import './App.css';
 import PlaylistBar from './playlistBar';
 import axios from 'axios';
 import List from '@mui/material/List';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import Button from '@mui/material/Button';
 
 function Playlist() {
 
   // State
   const [playlists, setPlaylists] = useState([]);
 
+  const navigate = useNavigate();
   const {state} = useLocation();
   const {username} = state;
 
@@ -17,6 +19,22 @@ function Playlist() {
   useEffect(() => {
     retrievePlaylists() 
   }, [])
+
+  const returnHome = async() => {
+    navigate('/home', {state: {username: username}})
+  }
+
+  const createPlaylist = async() => {
+    axios.post('http://localhost:5001/playlist-create', {
+      username: username
+    }).then((response) => {
+      retrievePlaylists()
+    })
+  }
+
+  const refreshPlaylistCallback = () => {
+    retrievePlaylists()
+  }
 
   const retrievePlaylists = async () => {
     axios.post('http://localhost:5001/playlist-get', {
@@ -31,6 +49,7 @@ function Playlist() {
           playlistID = {playlist.playlistID}
           date = {playlist.dateCreated}
           name = {playlist.name}
+          refreshPlaylistCallback = {refreshPlaylistCallback}
         />
       ))
     })
@@ -39,6 +58,8 @@ function Playlist() {
   return (
     <div className="App">
       <h1>Your Playlists</h1>
+      <Button variant="outlined" onClick={returnHome}>Home</Button>
+      <Button variant="outlined" onClick={createPlaylist}>Create</Button>
       <List>
         {playlists}
       </List>
