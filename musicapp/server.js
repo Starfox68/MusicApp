@@ -120,13 +120,17 @@ app.post("/check-login", (req, res) => {
     function (err, result, fields) {
       if (err) throw err;
 
-    bcrypt.compare(givenPassword, result[0].password, function(err, answer){
-      if (answer){
-        res.send({ result })
-      }else{
+      if (result.length == 0){
         res.send({result: []})
+      }else{
+        bcrypt.compare(givenPassword, result[0].password, function(err, answer){
+          if (answer){
+            res.send({ result })
+          }else{
+            res.send({result: []})
+          }
+        })
       }
-    })
     }
   );
 });

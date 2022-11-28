@@ -10,7 +10,6 @@ import axios from 'axios';
 import Grid from '@mui/material/Grid';
 
 
-
 function LoginScreen(){
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
@@ -52,8 +51,8 @@ function LoginScreen(){
                     <TextField id="outlined-basic" label="Username" variant="outlined" value={username} onChange={handleUsernameChange}/>
                     <TextField type="password" id="outlined-basic" label="Password" variant="outlined" value={password} onChange={handlePasswordChange}/>
                     <Button variant="outlined" style={{margin: 10}} onClick={validateLogin}>Login!</Button>
-                    {showError? <Typography color={"#FF0000"}> Enter a valid login </Typography> : <Typography color={"#FFFFFF"}> Enter a valid login </Typography>}
                     <Button variant="outlined" style={{margin: 10}} onClick={createNavigation}>Create User</Button>
+                    {showError? <Typography color={"#FF0000"}> Enter a valid login </Typography> : <Typography color={"#FFFFFF"}> Enter a valid login </Typography>}
                 </Stack>
             </Box>
         </Grid>
