@@ -7,6 +7,7 @@ import SongBar from './songBar';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Divider, List } from '@mui/material';
+import ResponsiveAppBar from './navBar';
 
 // Main search page
 function Home(){
@@ -60,7 +61,9 @@ function Home(){
 
   // if sorted=true, sort allSongs by likes field
   return (
-    <div className="App">
+    <>
+      <ResponsiveAppBar uname={username} />
+      <div className="App">
       <TextField id="outlined-basic" label="Search" variant="outlined" value={searchText} onChange={handleSearchTextChange} />
       <Button variant="outlined" onClick={navigateToPlaylists}>Playlists</Button>
       <Button variant="outlined" style={{margin: 100}} onClick={songTitleSearch}>Search Song Title</Button>
@@ -79,6 +82,7 @@ function Home(){
       {sorted === true && <div>{displayedSongs}</div>}
       </List>
     </div>
+    </>
   );
 }
 

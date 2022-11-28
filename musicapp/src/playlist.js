@@ -5,6 +5,7 @@ import axios from 'axios';
 import List from '@mui/material/List';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
+import ResponsiveAppBar from './navBar';
 
 function Playlist() {
 
@@ -19,10 +20,6 @@ function Playlist() {
   useEffect(() => {
     retrievePlaylists() 
   }, [])
-
-  const returnHome = async() => {
-    navigate('/home', {state: {username: username}})
-  }
 
   const createPlaylist = async() => {
     axios.post('http://localhost:5001/playlist-create', {
@@ -56,14 +53,16 @@ function Playlist() {
   }
 
   return (
-    <div className="App">
-      <h1>Your Playlists</h1>
-      <Button variant="outlined" onClick={returnHome}>Home</Button>
-      <Button variant="outlined" onClick={createPlaylist}>Create</Button>
-      <List>
-        {playlists}
-      </List>
+    <>
+    <ResponsiveAppBar uname={username}/>
+      <div className="App">
+        <h1>Your Playlists</h1>
+        <Button variant="outlined" onClick={createPlaylist}>Create</Button>
+        <List>
+          {playlists}
+        </List>
     </div>
+    </>
   )
 }
 
