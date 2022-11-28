@@ -6,6 +6,7 @@ import TextField from '@mui/material/TextField';
 import SongBar from './songBar';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Divider, List } from '@mui/material';
 
 // Main search page
 function Home(){
@@ -73,8 +74,10 @@ function Home(){
         }}>
           sort
       </ToggleButton>
+      <List>
       {sorted === false && <div>{allSongs}</div>}
       {sorted === true && <div>{displayedSongs}</div>}
+      </List>
     </div>
   );
 }

@@ -20,10 +20,10 @@ Once logged in to the MySQL shell, create the database schema: `source createTab
 Load the sample database: `source loadProductionDatabase.sql;`
 
 # Running the application
-To run the application, run 'npm install' in the musicapp folder
-In this same terminal window, now run 'node server.js'
+To run the application, run `npm install` in the musicapp folder
+In this same terminal window, now run `node server.js`
 
-In a new terminal tab in the musicapp folder run 'npm start'
+In a new terminal tab in the musicapp folder run `npm start`
 
 # Features
 1. Logging in / creating users. A default user exists with username: user1 password: password1

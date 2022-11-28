@@ -6,10 +6,9 @@ import axios from 'axios';
 import { MenuItem, Grid, ListItem, ListItemSecondaryAction, ListItemText, Divider, Select, Fade, IconButton, InputLabel } from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
-import { Add } from '@mui/icons-material';
 import CloseIcon from '@mui/icons-material/Close';
 
-function SongBar({songID, title, releaseDate, likes, username, userLikes}){
+function PlaylistSongBar({playlistID, songID, title, releaseDate, likes, username, userLikes, refreshSongsCallback}){
 
   const secondaryActionStyle = {
     margin: '0 auto',
@@ -19,44 +18,23 @@ function SongBar({songID, title, releaseDate, likes, username, userLikes}){
   const [likeCount, setLikeCount] = useState(likes);
   const [liked, setLiked] = useState(userLikes);
 
-  const [absentPlaylists, setAbsentPlaylists] = useState([]);
-  const [isPlaylistMenuOpen, setIsPlaylistMenuOpen] = useState(false);
-
   useEffect(() => {
     setLikeCount(likes)
     setLiked(userLikes)
   }, [likes, userLikes]);
 
-  const addToPlaylist = async(playlistID) => {
-    axios.post('http://localhost:5001/playlist-add-song', {
+  const onRemoveSong = () => {
+    console.log(songID)
+    console.log(playlistID)
+    console.log(username)
+    axios.post('http://localhost:5001/playlist-remove-song', {
       songID: songID,
       playlistID: playlistID,
       username: username
     }).then((response) => {
-      setIsPlaylistMenuOpen(false)
+      console.log("song removed")
+      refreshSongsCallback()
     })
-  }
-
-  const absentPlaylistSearch = async () => {
-    axios.post('http://localhost:5001/playlist-get-not-containing', {
-      songID: songID,
-      username: username
-    }).then((response) => {
-      const body = response.data;
-
-      setAbsentPlaylists(body.result.map((playlist) =>
-        <MenuItem value={playlist.playlistID}>{playlist.name}</MenuItem>)
-      )
-      setIsPlaylistMenuOpen(!isPlaylistMenuOpen)
-    })
-  };
-
-  const onSelectPlaylist = (event) => {
-    addToPlaylist(event.target.value)
-  }
-
-  const onOpenPlaylistMenu = () => {
-    absentPlaylistSearch()
   }
 
   const onLike = () => {
@@ -78,13 +56,8 @@ function SongBar({songID, title, releaseDate, likes, username, userLikes}){
       <ListItemText primary={title} secondary={"Released: " + releaseDate}/>
       <ListItemSecondaryAction >
         <Grid direction="row" alignItems="center" justifyContent="center" container>
-          <Fade in={isPlaylistMenuOpen}>
-            <Select style={{minWidth: 120}} autoWidth onChange={onSelectPlaylist}>
-              {absentPlaylists}
-            </Select>
-          </Fade>
-          <IconButton style={secondaryActionStyle} onClick={onOpenPlaylistMenu}>
-            {isPlaylistMenuOpen ? <CloseIcon/> : <Add/>}
+          <IconButton style={secondaryActionStyle} onClick={onRemoveSong}>
+            <CloseIcon/>
           </IconButton>
           <Divider orientation='vertical'></Divider>
           <Typography style={secondaryActionStyle}>{"Likes: " + likeCount}</Typography>
@@ -99,4 +72,4 @@ function SongBar({songID, title, releaseDate, likes, username, userLikes}){
   );
 }
 
-export default SongBar;
+export default PlaylistSongBar;

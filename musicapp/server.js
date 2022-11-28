@@ -192,6 +192,20 @@ app.post("/playlist-get-songs", (req, res) => {
   );
 })
 
+app.post("/playlist-get-not-containing", (req, res) => {
+  const username = req.body?.username
+  const songID = req.body?.songID
+
+  con.query(
+    `SELECT DISTINCT playlistID, name FROM Playlist WHERE username = '${username}' AND playlistID NOT IN (
+      SELECT playlistID FROM PlaylistSong WHERE songID = '${songID}')`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+})
+
 app.post("/playlist-rename", (req, res) => {
   const username = req.body?.username
   const playlistID = req.body?.playlistID
@@ -224,13 +238,27 @@ app.post("/playlist-add-song", (req, res) => {
   const songID = req.body?.songID
 
   con.query(
-    `INSERT INTO PlaylistSong VALUES(${songID}, ${playlistID}, '${username}')`,
+    `INSERT INTO PlaylistSong VALUES('${songID}', '${playlistID}', '${username}')`,
     function (err, result, fields) {
       if (err) throw err;
       res.send({ result })
     }
   );
 });
+
+app.post("/playlist-remove-song", (req, res) => {
+  const username = req.body?.username
+  const playlistID = req.body?.playlistID
+  const songID = req.body?.songID
+
+  con.query(
+    `DELETE FROM PlaylistSong WHERE songID='${songID}' AND playlistID='${playlistID}' AND username='${username}';`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+})
 
 app.post("/playlist-delete", (req, res) => {
   const username = req.body?.username
