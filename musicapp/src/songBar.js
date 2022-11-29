@@ -8,6 +8,7 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import { Add } from '@mui/icons-material';
 import CloseIcon from '@mui/icons-material/Close';
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 
 function SongBar({songID, title, releaseDate, likes, username, userLikes}){
 
@@ -65,6 +66,16 @@ function SongBar({songID, title, releaseDate, likes, username, userLikes}){
     setLikeCount(likeCount + ((liked) ? -1 : 1))
   }
 
+  const toYoutube = async () => {
+    const searchText = String(title) + ' lyrics'
+    const encodedTitle = encodeURIComponent(searchText.trim())
+    axios.get('https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=' + encodedTitle + '&key=AIzaSyBdo7yrDURXX8hMMX2nBTUJQb9CbDPhAdU')
+    .then((response) => {
+      const url = 'https://youtube.com/watch?v=' + String(response.data.items[0].id.videoId)
+      window.open(url, '_blank', 'noopener,noreferrer')
+    })
+  };
+
   const likeSong = async () => {
     axios.post('http://localhost:5001/like-song', {
       selected: !liked,
@@ -93,6 +104,7 @@ function SongBar({songID, title, releaseDate, likes, username, userLikes}){
             onClick={onLike}>
             {liked ? <ThumbUpIcon/> : <ThumbUpOffAltIcon/>}
           </IconButton>
+          <PlayCircleIcon onClick={toYoutube} />
         </Grid>
       </ListItemSecondaryAction>
     </ListItem>
