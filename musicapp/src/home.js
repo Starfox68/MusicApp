@@ -6,7 +6,7 @@ import TextField from '@mui/material/TextField';
 import SongBar from './songBar';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Divider, List } from '@mui/material';
+import { Grid, List } from '@mui/material';
 import ResponsiveAppBar from './navBar';
 
 // Main search page
@@ -64,9 +64,10 @@ function Home(){
     <>
       <ResponsiveAppBar uname={username} />
       <div className="App">
-      <TextField id="outlined-basic" label="Search" variant="outlined" value={searchText} onChange={handleSearchTextChange} />
-      <Button variant="outlined" onClick={navigateToPlaylists}>Playlists</Button>
-      <Button variant="outlined" style={{margin: 100}} onClick={songTitleSearch}>Search Song Title</Button>
+      <Grid container direction="row" alignItems="center" justifyContent="center" style={{paddingTop: '50px'}}>     
+        <TextField id="outlined-basic" label="Search Song Title" variant="outlined" value={searchText} onChange={handleSearchTextChange} style={{width: '400px'}} />
+        <Button variant="outlined" style={{margin: 10}} onClick={songTitleSearch}>Search</Button>
+      </Grid>
       <h1>Songs:</h1>
       <ToggleButton 
         variant="outlined" 
