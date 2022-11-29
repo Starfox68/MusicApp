@@ -7,6 +7,8 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
+import Grid from '@mui/material/Grid';
+
 
 
 
@@ -52,16 +54,18 @@ function CreateUserScreen(){
       };
 
     return (
-        <Box sx={{ width: '20%' }}>
-            <Stack spacing={2}>
-                <TextField label="First Name" variant="outlined" value={firstName} onChange={handleFirstChange}/>
-                <TextField label="Last Name" variant="outlined" value={lastName} onChange={handleLastChange}/>
-                <TextField label="Username" variant="outlined" value={username} onChange={handleUsernameChange}/>
-                <TextField label="Password" variant="outlined" value={password} onChange={handlePasswordChange}/>
-                <Button variant="outlined" style={{margin: 10}} onClick={makeUser}>Create User</Button>
-                {showError? <Typography color={"#FF0000"}> Username is already in use! </Typography> : <Typography color={"#FFFFFF"}> Username is already in use! </Typography>}  
-            </Stack>
-        </Box>
+        <Grid container spacing={2} direction="column" alignItems="center" justifyContent="center" style={{paddingTop: '50px'}}>
+            <Box sx={{ width: '20%' }}>
+                <Stack spacing={2}>
+                    <TextField label="First Name" variant="outlined" value={firstName} onChange={handleFirstChange}/>
+                    <TextField label="Last Name" variant="outlined" value={lastName} onChange={handleLastChange}/>
+                    <TextField label="Username" variant="outlined" value={username} onChange={handleUsernameChange}/>
+                    <TextField label="Password" variant="outlined" value={password} onChange={handlePasswordChange}/>
+                    <Button variant="outlined" style={{margin: 10}} onClick={makeUser}>Create User</Button>
+                    {showError? <Typography color={"#FF0000"}> Username is already in use! </Typography> : <Typography color={"#FFFFFF"}> Username is already in use! </Typography>}  
+                </Stack>
+            </Box>
+        </Grid>
     );
 }
 
