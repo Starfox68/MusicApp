@@ -46,8 +46,7 @@ var mysql = require("mysql");
 // This displays message that the server running and listening to specified port
 app.listen(port, () => console.log(`Listening on port ${port}`)); //Line 6
 
-var con = mysql.createPool({
-    connectionLimit : 10,
+var con = mysql.createConnection({
     host: "localhost",
     user: "musicUser",
     password: "Ilovedatabases",
@@ -107,7 +106,13 @@ app.post("/like-song", (req, res) => {
   `INSERT INTO SongLike VALUES(${songID}, '${username}')` :
   `DELETE FROM SongLike WHERE SongLike.songID = ${songID} AND SongLike.username = '${username}'`;
 
-  con.query(query);
+  con.query(
+    query,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
 });
 
 app.post("/get-song-likes", (req, res) => {
