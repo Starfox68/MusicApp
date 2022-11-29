@@ -1,58 +1,126 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import Grid from '@mui/material/Grid';  
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 import ToggleButton from '@mui/material/ToggleButton';
-import CheckIcon from '@mui/icons-material/Check'; 
 import axios from 'axios';
+import { MenuItem, Grid, ListItem, ListItemSecondaryAction, ListItemText, Divider, Select, Fade, IconButton, InputLabel } from '@mui/material';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
+import { Add } from '@mui/icons-material';
+import CloseIcon from '@mui/icons-material/Close';
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 
 function SongBar({songID, title, releaseDate, likes, username, userLikes}){
 
+  const secondaryActionStyle = {
+    margin: '0 auto',
+    padding: 10
+  }
+
   const [likeCount, setLikeCount] = useState(likes);
-  const [selected, setSelected] = useState(userLikes);
+  const [liked, setLiked] = useState(userLikes);
+
+  const [absentPlaylists, setAbsentPlaylists] = useState([]);
+  const [isPlaylistMenuOpen, setIsPlaylistMenuOpen] = useState(false);
 
   useEffect(() => {
     setLikeCount(likes)
-    setSelected(userLikes)
+    setLiked(userLikes)
   }, [likes, userLikes]);
+
+  const addToPlaylist = async(playlistID) => {
+    axios.post('http://localhost:5001/playlist-add-song', {
+      songID: songID,
+      playlistID: playlistID,
+      username: username
+    }).then((response) => {
+      setIsPlaylistMenuOpen(false)
+    })
+  }
+
+  const absentPlaylistSearch = async () => {
+    axios.post('http://localhost:5001/playlist-get-not-containing', {
+      songID: songID,
+      username: username
+    }).then((response) => {
+      const body = response.data;
+
+      setAbsentPlaylists(body.result.map((playlist) =>
+        <MenuItem value={playlist.playlistID}>{playlist.name}</MenuItem>)
+      )
+      setIsPlaylistMenuOpen(!isPlaylistMenuOpen)
+    })
+  };
+
+  const onSelectPlaylist = (event) => {
+    addToPlaylist(event.target.value)
+  }
+
+  const onOpenPlaylistMenu = () => {
+    absentPlaylistSearch()
+  }
+
+  const onLike = () => {
+    likeSong().then( () => {
+      getLikeCount()
+      setLiked(!liked)
+    })
+  }
+
+  const toYoutube = async () => {
+    const searchText = String(title) + ' lyrics'
+    const encodedTitle = encodeURIComponent(searchText.trim())
+    axios.get('https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=' + encodedTitle + '&key=AIzaSyBdo7yrDURXX8hMMX2nBTUJQb9CbDPhAdU')
+    .then((response) => {
+      const url = 'https://youtube.com/watch?v=' + String(response.data.items[0].id.videoId)
+      window.open(url, '_blank', 'noopener,noreferrer')
+    })
+  };
+
+  const getLikeCount = async() => {
+    axios.post('http://localhost:5001/get-song-likes', {
+      songID: songID
+    }).then((response) => {
+      const body = response.data
+      const totalLikes = body.result[0].totalLikes
+      setLikeCount(totalLikes)
+    })
+  }
 
   const likeSong = async () => {
     axios.post('http://localhost:5001/like-song', {
-      selected: !selected,
+      selected: !liked,
       songID: songID,
       username: username
     })
   }
 
   return (
-    <Grid container alignItems="center" style={{backgroundColor: '#b2c8eb', padding: 10, margin: 10}}>
-      <Grid item>
-        <Typography>{title}</Typography>
-      </Grid>
-      <Divider orientation="vertical" flexItem style={{margin: 10}}/>
-      <Grid item style={{padding: 10}}>
-        <Typography>{releaseDate}</Typography>
-      </Grid>
-      <Divider orientation="vertical" flexItem style={{margin: 10}}/>
-      <Grid item>
-        <Typography>{likeCount}</Typography>
-      </Grid>
-      <Divider orientation="vertical" flexItem style={{margin: 10}}/>
-      <Grid item>
-      <ToggleButton
-          value="check"
-          selected={selected}
-          onChange={() => {
-            setSelected(!selected) 
-            likeSong()
-            setLikeCount(likeCount + ((selected) ? -1 : 1))
-          }}
-        >
-        <CheckIcon/>
-      </ToggleButton>
-      </Grid>
-    </Grid>
+    <ListItem sx={{borderBottom: 1}}>
+      <ListItemText primary={title} secondary={"Released: " + releaseDate}/>
+      <ListItemSecondaryAction >
+        <Grid direction="row" alignItems="center" justifyContent="center" container>
+          <Fade in={isPlaylistMenuOpen}>
+            <Select defaultValue="" style={{minWidth: 120}} autoWidth onChange={onSelectPlaylist}>
+              {absentPlaylists}
+            </Select>
+          </Fade>
+          <IconButton style={secondaryActionStyle} onClick={onOpenPlaylistMenu}>
+            {isPlaylistMenuOpen ? <CloseIcon/> : <Add/>}
+          </IconButton>
+          <Divider orientation='vertical'></Divider>
+          <Typography style={secondaryActionStyle}>{"Likes: " + likeCount}</Typography>
+          <IconButton
+            style={secondaryActionStyle}
+            onClick={onLike}>
+            {liked ? <ThumbUpIcon/> : <ThumbUpOffAltIcon/>}
+          </IconButton>
+          <IconButton>
+          <PlayCircleIcon onClick={toYoutube} />
+          </IconButton>
+        </Grid>
+      </ListItemSecondaryAction>
+    </ListItem>
   );
 }
 

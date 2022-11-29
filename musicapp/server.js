@@ -80,7 +80,7 @@ app.post("/search-song-title", (req, res) => {
       FROM SongLike
       GROUP BY songID
   ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
-  WHERE title='${songTitle}';` : 
+  WHERE title LIKE '%${songTitle}%';` : 
   `SELECT Song.songID as songID, title, releaseDate, totalLikes, userLikes
   FROM Song LEFT OUTER JOIN (
       SELECT songID, count(songID) as totalLikes, SUM(CASE WHEN SongLike.username='${username}' THEN 1 ELSE 0 END) as userLikes
@@ -110,6 +110,18 @@ app.post("/like-song", (req, res) => {
   con.query(query);
 });
 
+app.post("/get-song-likes", (req, res) => {
+  const songID = req.body?.songID
+
+  con.query(
+    `SELECT COUNT(*) AS totalLikes FROM SongLike WHERE songID='${songID}'`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  )
+})
+
 // Verify username and password
 app.post("/check-login", (req, res) => {
   const givenUsername = req.body?.username
@@ -121,13 +133,17 @@ app.post("/check-login", (req, res) => {
     function (err, result, fields) {
       if (err) throw err;
 
-    bcrypt.compare(givenPassword, result[0].password, function(err, answer){
-      if (answer){
-        res.send({ result })
-      }else{
+      if (result.length == 0){
         res.send({result: []})
+      }else{
+        bcrypt.compare(givenPassword, result[0].password, function(err, answer){
+          if (answer){
+            res.send({ result })
+          }else{
+            res.send({result: []})
+          }
+        })
       }
-    })
     }
   );
 });
@@ -172,6 +188,7 @@ app.post("/playlist-get", (req, res) => {
   );
 });
 
+
 app.post("/playlist-get-songs", (req, res) => {
   const username = req.body?.username
   const playlistID = req.body?.playlistID
@@ -186,6 +203,20 @@ app.post("/playlist-get-songs", (req, res) => {
       WHERE Song.songID IN (
         SELECT songID AS playlistSongID FROM PlaylistSong WHERE playlistID='${playlistID}' AND username='${username}'
       )`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+})
+
+app.post("/playlist-get-not-containing", (req, res) => {
+  const username = req.body?.username
+  const songID = req.body?.songID
+
+  con.query(
+    `SELECT DISTINCT playlistID, name FROM Playlist WHERE username = '${username}' AND playlistID NOT IN (
+      SELECT playlistID FROM PlaylistSong WHERE songID = '${songID}')`,
     function (err, result, fields) {
       if (err) throw err;
       res.send({ result })
@@ -225,7 +256,7 @@ app.post("/playlist-add-song", (req, res) => {
   const songID = req.body?.songID
 
   con.query(
-    `INSERT INTO PlaylistSong VALUES(${songID}, ${playlistID}, '${username}')`,
+    `INSERT INTO PlaylistSong VALUES('${songID}', '${playlistID}', '${username}')`,
     function (err, result, fields) {
       if (err) throw err;
       res.send({ result })
@@ -233,12 +264,55 @@ app.post("/playlist-add-song", (req, res) => {
   );
 });
 
+app.post("/playlist-remove-song", (req, res) => {
+  const username = req.body?.username
+  const playlistID = req.body?.playlistID
+  const songID = req.body?.songID
+
+  con.query(
+    `DELETE FROM PlaylistSong WHERE songID='${songID}' AND playlistID='${playlistID}' AND username='${username}';`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+})
+
 app.post("/playlist-delete", (req, res) => {
   const username = req.body?.username
   const playlistID = req.body?.playlistID
 
   con.query(
     `DELETE FROM Playlist WHERE username='${username}' AND playlistID='${playlistID}';`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+});
+
+app.post("/users-get", (req, res) => {
+  const username = req.body?.username
+
+  con.query(
+    `SELECT username FROM User;`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+});
+
+app.post("/mutual-song-likes-get", (req, res) => {
+  const username1 = req.body?.username1
+  const username2 = req.body?.username2
+
+  con.query(
+    `SELECT Song.songID, Song.title, Song.releaseDate FROM SongLike, Song
+    WHERE username="${username1}" AND Song.songID=SongLike.songID
+    INTERSECT
+    SELECT Song.songID, Song.title, Song.releaseDate FROM SongLike, Song
+    WHERE username="${username2}" AND Song.songID=SongLike.songID;`,
     function (err, result, fields) {
       if (err) throw err;
       res.send({ result })

@@ -1,9 +1,5 @@
-INSERT INTO User VALUES ("user1", "password1");
-INSERT INTO User VALUES ("user2", "password2");
-
-INSERT INTO User VALUES ("user10", "$2b$10$PsK6J20/BrE00FD5S2XgKu1iLcIiRIFjyn3Zgwn0kUeXLx9FsxWq.")
-INSERt INTO User VALUES ("user11", "$2b$10$Troa30yc268bXgeUMFVoCOkXOwOo.REo7.oYntUisH5pWvuHYpsVa")
-
+INSERT INTO User VALUES ("user1", "$2b$10$PsK6J20/BrE00FD5S2XgKu1iLcIiRIFjyn3Zgwn0kUeXLx9FsxWq.");
+INSERT INTO User VALUES ("user2", "$2b$10$Troa30yc268bXgeUMFVoCOkXOwOo.REo7.oYntUisH5pWvuHYpsVa");
 
 LOAD DATA LOCAL INFILE 'song.csv'
 INTO TABLE Song

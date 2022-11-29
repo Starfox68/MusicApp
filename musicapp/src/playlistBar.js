@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import axios from 'axios';
+import PlaylistSongBar from './playlistSongBar';
 import ListItem from '@mui/material/Listitem';
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
@@ -11,7 +12,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import Grid from '@mui/material/Grid';
-import SongBar from './songBar';
 import { Fade, Grow, ListItemSecondaryAction, TextField } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 
@@ -23,6 +23,11 @@ function PlaylistBar({playlistID, name, date, username, refreshPlaylistCallback}
   const [songs, setSongs] = React.useState([])
 
   var hasOpened = false
+
+  const refreshSongsCallback = () => {
+    console.log("refresh song callback")
+    songTitleSearch()
+  }
 
   const onCollapseClick = () => {
     if (!hasOpened) {
@@ -69,13 +74,16 @@ function PlaylistBar({playlistID, name, date, username, refreshPlaylistCallback}
       const body = response.data;
       
       setSongs(body.result.map((song) =>
-        <SongBar
+        <PlaylistSongBar
+          playlistID={playlistID}
           songID={song.songID}
           title={song.title}
           releaseDate={song.releaseDate}
+          username={username}
           likes={(song.totalLikes) ? song.totalLikes : 0}
-          userLikes={(song.userLikes === 1) ? true : false}>
-        </SongBar>)
+          userLikes={(song.userLikes === 1) ? true : false}
+          refreshSongsCallback={refreshSongsCallback}>
+        </PlaylistSongBar>)
       )
 
       setOpen(!open);
@@ -84,7 +92,7 @@ function PlaylistBar({playlistID, name, date, username, refreshPlaylistCallback}
 
   return (
     <div>
-      <ListItem>
+      <ListItem style={{backgroundColor: '#87cefa'}}>
         <ListItemText primary = {name} secondary = {('Date created: ' + date)}/>
         <ListItemSecondaryAction>
           <Fade in={renameOpen}>
