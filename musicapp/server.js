@@ -175,6 +175,7 @@ app.post("/playlist-get", (req, res) => {
   );
 });
 
+
 app.post("/playlist-get-songs", (req, res) => {
   const username = req.body?.username
   const playlistID = req.body?.playlistID
@@ -270,6 +271,35 @@ app.post("/playlist-delete", (req, res) => {
 
   con.query(
     `DELETE FROM Playlist WHERE username='${username}' AND playlistID='${playlistID}';`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+});
+
+app.post("/users-get", (req, res) => {
+  const username = req.body?.username
+
+  con.query(
+    `SELECT username FROM User;`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+});
+
+app.post("/mutual-song-likes-get", (req, res) => {
+  const username1 = req.body?.username1
+  const username2 = req.body?.username2
+
+  con.query(
+    `SELECT Song.songID, Song.title, Song.releaseDate FROM SongLike, Song
+    WHERE username="${username1}" AND Song.songID=SongLike.songID
+    INTERSECT
+    SELECT Song.songID, Song.title, Song.releaseDate FROM SongLike, Song
+    WHERE username="${username2}" AND Song.songID=SongLike.songID;`,
     function (err, result, fields) {
       if (err) throw err;
       res.send({ result })

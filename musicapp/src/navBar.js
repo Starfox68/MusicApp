@@ -16,9 +16,9 @@ const navTo = (param) => {
       navigate('/home', {state: {username: uname}})
     }
     //TODO: Add when we have a users page
-    // if (param == "Users"){
-    //     navigate('/users')
-    // }
+    if (param == "Users"){
+        navigate('/users', {state: {username: uname}})
+    }
     if (param === "Playlists"){
       navigate('/playlists', {state: {username: uname}})
     }
