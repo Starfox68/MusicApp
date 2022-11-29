@@ -22,10 +22,16 @@ function UserBar({username1, username2, refreshUserCallback}) {
 
   var hasOpened = false
 
+  // Load mutual songs on first page load
+  useEffect(() => {
+    retrieveMutualSongs() 
+  }, [])
+
   const onCollapseClick = () => {
     if (!hasOpened) {
       hasOpened = true
       retrieveMutualSongs()
+      setOpen(!open)
     }
   };
 
@@ -50,14 +56,13 @@ function UserBar({username1, username2, refreshUserCallback}) {
         />)
       )
 
-      setOpen(!open);
     })
   };
 
   return (
     <div>
-      <ListItem style={{backgroundColor: '#87cefa'}}>
-        <ListItemText primary = {username2} secondary="number of mutual songs: " />
+      <ListItem onClick={onCollapseClick} style={{backgroundColor: '#87cefa'}}>
+        <ListItemText primary = {username2} secondary= {"number of mutual songs: " + songs.length} />
         <ListItemSecondaryAction>
           <Fade>
             <TextField defaultValue={username2} style={{paddingRight: 10}}>
