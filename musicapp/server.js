@@ -46,7 +46,8 @@ var mysql = require("mysql");
 // This displays message that the server running and listening to specified port
 app.listen(port, () => console.log(`Listening on port ${port}`)); //Line 6
 
-var con = mysql.createConnection({
+var con = mysql.createPool({
+    connectionLimit : 10,
     host: "localhost",
     user: "musicUser",
     password: "Ilovedatabases",
