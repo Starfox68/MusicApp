@@ -12,7 +12,6 @@ function Playlist() {
   // State
   const [playlists, setPlaylists] = useState([]);
 
-  const navigate = useNavigate();
   const {state} = useLocation();
   const {username} = state;
 

@@ -79,7 +79,7 @@ app.post("/search-song-title", (req, res) => {
       FROM SongLike
       GROUP BY songID
   ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
-  WHERE title='${songTitle}';` : 
+  WHERE title LIKE '%${songTitle}%';` : 
   `SELECT Song.songID as songID, title, releaseDate, totalLikes, userLikes
   FROM Song LEFT OUTER JOIN (
       SELECT songID, count(songID) as totalLikes, SUM(CASE WHEN SongLike.username='${username}' THEN 1 ELSE 0 END) as userLikes
@@ -108,6 +108,18 @@ app.post("/like-song", (req, res) => {
 
   con.query(query);
 });
+
+app.post("/get-song-likes", (req, res) => {
+  const songID = req.body?.songID
+
+  con.query(
+    `SELECT COUNT(*) AS totalLikes FROM SongLike WHERE songID='${songID}'`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  )
+})
 
 // Verify username and password
 app.post("/check-login", (req, res) => {

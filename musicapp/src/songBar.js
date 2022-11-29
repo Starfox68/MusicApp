@@ -61,9 +61,10 @@ function SongBar({songID, title, releaseDate, likes, username, userLikes}){
   }
 
   const onLike = () => {
-    setLiked(!liked) 
-    likeSong()
-    setLikeCount(likeCount + ((liked) ? -1 : 1))
+    likeSong().then( () => {
+      getLikeCount()
+      setLiked(!liked)
+    })
   }
 
   const toYoutube = async () => {
@@ -75,6 +76,16 @@ function SongBar({songID, title, releaseDate, likes, username, userLikes}){
       window.open(url, '_blank', 'noopener,noreferrer')
     })
   };
+
+  const getLikeCount = async() => {
+    axios.post('http://localhost:5001/get-song-likes', {
+      songID: songID
+    }).then((response) => {
+      const body = response.data
+      const totalLikes = body.result[0].totalLikes
+      setLikeCount(totalLikes)
+    })
+  }
 
   const likeSong = async () => {
     axios.post('http://localhost:5001/like-song', {
@@ -90,7 +101,7 @@ function SongBar({songID, title, releaseDate, likes, username, userLikes}){
       <ListItemSecondaryAction >
         <Grid direction="row" alignItems="center" justifyContent="center" container>
           <Fade in={isPlaylistMenuOpen}>
-            <Select style={{minWidth: 120}} autoWidth onChange={onSelectPlaylist}>
+            <Select defaultValue="" style={{minWidth: 120}} autoWidth onChange={onSelectPlaylist}>
               {absentPlaylists}
             </Select>
           </Fade>
@@ -104,7 +115,9 @@ function SongBar({songID, title, releaseDate, likes, username, userLikes}){
             onClick={onLike}>
             {liked ? <ThumbUpIcon/> : <ThumbUpOffAltIcon/>}
           </IconButton>
+          <IconButton>
           <PlayCircleIcon onClick={toYoutube} />
+          </IconButton>
         </Grid>
       </ListItemSecondaryAction>
     </ListItem>
