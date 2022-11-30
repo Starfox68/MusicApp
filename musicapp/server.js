@@ -4,32 +4,24 @@ const { spawn } = require("child_process");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 var mysql = require("mysql");
-
 const app = express();
-
 app.use(cors());
 // parse application/json
 app.use(bodyParser.json());
-
 var con = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "Cheese1601",
   database: "support",
 });
-
 //connect to database
 con.connect((err) => {
   if (err) throw err;
   console.log("Mysql Connected...");
 });
-
-
-
 app.listen(3001, () => {
   console.log("Server running successfully on 3001");
 });
-
 */
 
 const express = require('express'); //Line 1
@@ -75,23 +67,19 @@ app.post("/search-song-title", (req, res) => {
   const username = req.body?.username
 
   const query = (songTitle) ? 
-  `SELECT t.songID, title, releaseDate, totalLikes, userLikes, Artist.name
-  FROM (SELECT Song.songID as songID, title, releaseDate, totalLikes, userLikes
+  `SELECT Song.songID as songID, title, releaseDate, totalLikes, userLikes
   FROM Song LEFT OUTER JOIN (
       SELECT songID, count(songID) as totalLikes, SUM(CASE WHEN SongLike.username='${username}' THEN 1 ELSE 0 END) as userLikes
       FROM SongLike
       GROUP BY songID
   ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
-  WHERE title LIKE '%${songTitle}%') as t, SongAuthor, Artist
-  WHERE t.songID = SongAuthor.songID AND SongAuthor.artistID = Artist.artistID;` : 
-  `SELECT t.songID, title, releaseDate, totalLikes, userLikes, Artist.name
-  FROM (SELECT Song.songID as songID, title, releaseDate, totalLikes, userLikes
+  WHERE title LIKE '%${songTitle}%';` : 
+  `SELECT Song.songID as songID, title, releaseDate, totalLikes, userLikes
   FROM Song LEFT OUTER JOIN (
       SELECT songID, count(songID) as totalLikes, SUM(CASE WHEN SongLike.username='${username}' THEN 1 ELSE 0 END) as userLikes
       FROM SongLike
       GROUP BY songID
-  ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID) as t, SongAuthor, Artist
-  WHERE t.songID = SongAuthor.songID AND SongAuthor.artistID = Artist.artistID
+  ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
   LIMIT 100`;  
   con.query(
     query,
@@ -262,6 +250,19 @@ app.post("/playlist-create", (req, res) => {
 
   con.query(
     `INSERT INTO Playlist VALUES('${username}', UUID(), 'New Playlist', curdate())`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+});
+
+//get all artists for a given song
+app.post("/get-Artist", (req, res) => {
+  const songID = req.body?.songID
+  
+  con.query(
+    `SELECT name FROM Artist WHERE Artist.artistID IN (SELECT artistID FROM SongAuthor WHERE SongAuthor.songID = '${songID}')`,
     function (err, result, fields) {
       if (err) throw err;
       res.send({ result })

@@ -10,7 +10,7 @@ import { Add } from '@mui/icons-material';
 import CloseIcon from '@mui/icons-material/Close';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 
-function SongBar({songID, title, releaseDate, likes, username, userLikes, artistName}){
+function SongBar({songID, title, releaseDate, likes, username, userLikes}){
 
   const secondaryActionStyle = {
     margin: '0 auto',
@@ -19,6 +19,7 @@ function SongBar({songID, title, releaseDate, likes, username, userLikes, artist
 
   const [likeCount, setLikeCount] = useState(likes);
   const [liked, setLiked] = useState(userLikes);
+  const [artist, setArtist] = useState('');
 
   const [absentPlaylists, setAbsentPlaylists] = useState([]);
   const [isPlaylistMenuOpen, setIsPlaylistMenuOpen] = useState(false);
@@ -26,6 +27,7 @@ function SongBar({songID, title, releaseDate, likes, username, userLikes, artist
   useEffect(() => {
     setLikeCount(likes)
     setLiked(userLikes)
+    getArtist()
   }, [likes, userLikes]);
 
   const addToPlaylist = async(playlistID) => {
@@ -67,12 +69,9 @@ function SongBar({songID, title, releaseDate, likes, username, userLikes, artist
     })
   }
 
-  artistName = artistName.slice(0,-1)
-
   const toYoutube = async () => {
-    const searchText = String(title) + ' ' + String(artistName) + ' lyrics'
+    const searchText = String(title) + ' ' + String(artist) + ' lyrics'
     const encodedTitle = encodeURIComponent(searchText.trim())
-    console.log('https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=' + encodedTitle + '&key=AIzaSyBdo7yrDURXX8hMMX2nBTUJQb9CbDPhAdU')
     axios.get('https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=' + encodedTitle + '&key=AIzaSyBdo7yrDURXX8hMMX2nBTUJQb9CbDPhAdU')
     .then((response) => {
       const url = 'https://youtube.com/watch?v=' + String(response.data.items[0].id.videoId)
@@ -98,9 +97,22 @@ function SongBar({songID, title, releaseDate, likes, username, userLikes, artist
     })
   }
 
+  const getArtist = async() => {
+    axios.post('http://localhost:5001/get-Artist', {
+      songID: songID
+    }).then((response) => {
+      var allAuthors = ''
+      response.data.result.forEach(e => {
+        allAuthors = allAuthors + e.name.slice(0, -1) + ', '
+      });
+      allAuthors = allAuthors.slice(0, -2)
+      setArtist(allAuthors)
+    })
+  }
+
   return (
     <ListItem sx={{borderBottom: 1}}>
-      <ListItemText primary={title} secondary={"Released: " + releaseDate + " by Artist: " + artistName}/>
+      <ListItemText primary={title} secondary={"Released: " + releaseDate + " by Artist: " + artist}/>
       <ListItemSecondaryAction >
         <Grid direction="row" alignItems="center" justifyContent="center" container>
           <Fade in={isPlaylistMenuOpen}>
