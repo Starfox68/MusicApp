@@ -61,10 +61,7 @@ function SongBar({songID, title, releaseDate, likes, username, userLikes}){
   }
 
   const onLike = () => {
-    likeSong().then( () => {
-      getLikeCount()
-      setLiked(!liked)
-    })
+    likeSong()
   }
 
   const toYoutube = async () => {
@@ -92,6 +89,9 @@ function SongBar({songID, title, releaseDate, likes, username, userLikes}){
       selected: !liked,
       songID: songID,
       username: username
+    }).then((response) => {
+      getLikeCount()
+      setLiked(!liked)
     })
   }
 
