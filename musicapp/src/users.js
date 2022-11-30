@@ -3,8 +3,7 @@ import './App.css';
 import UserBar from './userBar';
 import axios from 'axios';
 import List from '@mui/material/List';
-import { useLocation, useNavigate } from 'react-router-dom';
-import Button from '@mui/material/Button';
+import { useLocation } from 'react-router-dom';
 import ResponsiveAppBar from './navBar';
 
 function Users() {
@@ -12,7 +11,6 @@ function Users() {
   // State
   const [users, setUsers] = useState([]);
 
-  const navigate = useNavigate();
   const {state} = useLocation();
   const {username} = state;
 
@@ -20,10 +18,6 @@ function Users() {
   useEffect(() => {
     retrieveUsers() 
   }, [])
-
-  const refreshUserCallback = () => {
-    retrieveUsers()
-  }
 
   const retrieveUsers = async () => {
     axios.post('http://localhost:5001/users-get', {
@@ -34,6 +28,7 @@ function Users() {
 
       setUsers(body.result.map((user) =>
         <UserBar 
+          key = {user.username}
           username1= {username}
           username2 = {user.username}
         />

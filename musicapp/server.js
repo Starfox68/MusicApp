@@ -4,32 +4,24 @@ const { spawn } = require("child_process");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 var mysql = require("mysql");
-
 const app = express();
-
 app.use(cors());
 // parse application/json
 app.use(bodyParser.json());
-
 var con = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "Cheese1601",
   database: "support",
 });
-
 //connect to database
 con.connect((err) => {
   if (err) throw err;
   console.log("Mysql Connected...");
 });
-
-
-
 app.listen(3001, () => {
   console.log("Server running successfully on 3001");
 });
-
 */
 
 const express = require('express'); //Line 1
@@ -67,6 +59,8 @@ app.get('/express_backend', (req, res) => { //Line 9
   res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' }); //Line 10
 }); //Line 11
 
+
+//TODO: prepare this statement
 // Search for a song title
 app.post("/search-song-title", (req, res) => {
   const songTitle = req.body?.songTitle
@@ -86,7 +80,7 @@ app.post("/search-song-title", (req, res) => {
       FROM SongLike
       GROUP BY songID
   ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
-  LIMIT 100`;  
+  LIMIT 30`;
   con.query(
     query,
     function (err, result, fields) {
@@ -127,15 +121,18 @@ app.post("/get-song-likes", (req, res) => {
   )
 })
 
+//prepared statement
 // Verify username and password
 app.post("/check-login", (req, res) => {
   const givenUsername = req.body?.username
   const givenPassword = req.body?.password
 
+  var query = "SELECT * FROM User WHERE username = ?";
+  var val= [givenUsername];
+  var sql = mysql.format(query, val);
+
   // User VALUES ("user1", "password1");
-  con.query(
-    `SELECT * FROM User WHERE username='${givenUsername}'`,
-    function (err, result, fields) {
+  con.query(sql, function (err, result, fields) {
       if (err) throw err;
 
       if (result.length == 0){
@@ -153,12 +150,11 @@ app.post("/check-login", (req, res) => {
   );
 });
 
+//prepared statement
 //Create new username and password
 app.post("/make-new-user", (req, res) => {
   const givenUsername = req.body?.username
   const givenPassword = req.body?.password
-  // const givenFName = req.body?.firstName
-  // const givenLName = req.body?.lastName
 
 
   var hashedPassword = givenPassword;
@@ -166,9 +162,12 @@ app.post("/make-new-user", (req, res) => {
     bcrypt.hash(givenPassword, salt, function(err, hash){
       hashedPassword = hash  
 
+      var query = "INSERT INTO User VALUES (?, ?)";
+      var val= [givenUsername, hashedPassword];
+      var sql = mysql.format(query, val);
+
       // INSERT INTO User VALUES ("user1", "password1");
-      con.query(
-        `INSERT INTO User VALUES ('${givenUsername}', '${hashedPassword}')`,
+      con.query(sql,
         function (err, result, fields) {
           if (err) res.send("ERROR");
           else res.send("SUCCESS")
@@ -179,7 +178,6 @@ app.post("/make-new-user", (req, res) => {
 });
 
 // Playlists
-
 app.post("/playlist-get", (req, res) => {
   const username = req.body?.username
 
@@ -229,13 +227,17 @@ app.post("/playlist-get-not-containing", (req, res) => {
   );
 })
 
+//prepared query
 app.post("/playlist-rename", (req, res) => {
   const username = req.body?.username
   const playlistID = req.body?.playlistID
   const name = req.body?.name
 
-  con.query(
-    `UPDATE Playlist SET name='${name}' WHERE playlistID='${playlistID}' AND username='${username}';`,
+  var query = "UPDATE Playlist SET name = ? WHERE playlistID = ? AND username = ?";
+    var val= [name, playlistID, username];
+    var sql = mysql.format(query, val);
+
+  con.query(sql,
     function (err, result, fields) {
       if (err) throw err;
       res.send({ result })
@@ -248,6 +250,19 @@ app.post("/playlist-create", (req, res) => {
 
   con.query(
     `INSERT INTO Playlist VALUES('${username}', UUID(), 'New Playlist', curdate())`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+});
+
+//get all artists for a given song
+app.post("/get-Artist", (req, res) => {
+  const songID = req.body?.songID
+  
+  con.query(
+    `SELECT name FROM Artist WHERE Artist.artistID IN (SELECT artistID FROM SongAuthor WHERE SongAuthor.songID = '${songID}')`,
     function (err, result, fields) {
       if (err) throw err;
       res.send({ result })
