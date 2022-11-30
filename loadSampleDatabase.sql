@@ -18,7 +18,7 @@ INSERT INTO SongAuthor VALUES (3,1);
 INSERT INTO User VALUES ("user1", "$2b$10$PsK6J20/BrE00FD5S2XgKu1iLcIiRIFjyn3Zgwn0kUeXLx9FsxWq.");
 INSERT INTO User VALUES ("user2", "$2b$10$Troa30yc268bXgeUMFVoCOkXOwOo.REo7.oYntUisH5pWvuHYpsVa");
 
-INSERT INTO Playlist VALUES ("user1", 1, "coolsongs", CONVERT(date, '2022-10-19'))
+INSERT INTO Playlist VALUES ("user1", 1, "coolsongs", CONVERT('2022-10-19', DATE));
 
 INSERT INTO PlaylistSong VALUES (1, 1, "user1");
 

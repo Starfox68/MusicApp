@@ -7,60 +7,42 @@ FROM Song LEFT OUTER JOIN (
     FROM SongLike
     GROUP BY songID
 ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
-WHERE title="Cash Up";
+WHERE title LIKE '%Dangerous%';
 
 -- feature 2
-SELECT artistID, count(songlike.songID) as artistSongLikes
-FROM songauthor
-LEFT OUTER JOIN songlike ON songauthor.songID=songlike.songID
+SELECT artistID, count(SongLike.songID) as artistSongLikes
+FROM SongAuthor LEFT OUTER JOIN SongLike ON SongAuthor.songID=SongLike.songID
 GROUP BY artistID
-LIMIT 100;
+ORDER BY artistSongLikes DESC
+LIMIT 5;
 
 -- feature 3
-SELECT songIDs.title, Artist.name
-FROM (
-    SELECT Song.songID, title
-    FROM PlaylistSong, Song
-    WHERE username="user1"
-    AND playlistID=1
-    AND PlaylistSong.songID=Song.songID
-) as songIDs, SongAuthor, Artist
-WHERE songIDs.songID=SongAuthor.songID
-AND SongAuthor.artistID = Artist.artistID;
+SELECT DISTINCT playlistID, name 
+FROM Playlist 
+WHERE username = 'user1' AND playlistID NOT IN (
+    SELECT playlistID FROM PlaylistSong WHERE songID = '514250'
+);
 
 -- feature 4
-INSERT INTO PlaylistSong (SongID, PlaylistID, Username)
-VALUES (901707, 1, "user1");
-
--- display user1's playlist using feature 3 after adding song
-SELECT songIDs.title, Artist.name
-FROM (
-    SELECT Song.songID, title
-    FROM PlaylistSong, Song
-    WHERE username="user1"
-    AND playlistID=1
-    AND PlaylistSong.songID=Song.songID
-) as songIDs, SongAuthor, Artist
-WHERE songIDs.songID=SongAuthor.songID
-AND SongAuthor.artistID = Artist.artistID;
+INSERT INTO PlaylistSong (SongID, PlaylistID, Username) VALUES (586709, 1, "user1");
+-- Testing feature 4
+SELECT songID FROM PlaylistSong WHERE username="user1" AND playlistID = 1;
 
 -- feature 5
-WITH mutualLikedSongs AS
-    (SELECT Song.songID FROM SongLike, Song
-    WHERE username="user1" AND Song.songID=SongLike.songID
-    INTERSECT
-    SELECT Song.songID FROM SongLike, Song
-    WHERE username="user2" AND Song.songID=SongLike.songID)
-SELECT COUNT(songID) as numMutualLikedSongs FROM mutualLikedSongs;
+SELECT Song.songID, Song.title, Song.releaseDate 
+FROM SongLike, Song
+WHERE username='user1' AND Song.songID=SongLike.songID
+INTERSECT
+SELECT Song.songID, Song.title, Song.releaseDate FROM SongLike, Song
+WHERE username='user2' AND Song.songID=SongLike.songID;
 
 -- feature 6
 DELETE FROM SongLike 
-WHERE username="user1" AND songID=1;
-
-WITH mutualLikedSongs AS -- display mutual songs after removing a like from one of the songs
-    (SELECT Song.songID FROM SongLike, Song
-    WHERE username="user1" AND Song.songID=SongLike.songID
-    INTERSECT
-    SELECT Song.songID FROM SongLike, Song
-    WHERE username="user2" AND Song.songID=SongLike.songID)
-SELECT COUNT(songID) as numMutualLikedSongs FROM mutualLikedSongs;
+WHERE username="user1" AND songID=645767;
+-- Testing feature 6
+SELECT Song.songID, Song.title, Song.releaseDate 
+FROM SongLike, Song
+WHERE username='user1' AND Song.songID=SongLike.songID
+INTERSECT
+SELECT Song.songID, Song.title, Song.releaseDate FROM SongLike, Song
+WHERE username='user2' AND Song.songID=SongLike.songID;
