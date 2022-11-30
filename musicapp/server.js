@@ -60,29 +60,42 @@ app.get('/express_backend', (req, res) => { //Line 9
 }); //Line 11
 
 
+function makeSongQuery(songTitle, username) {
+  if (songTitle) {
+    const query = `SELECT Song.songID as songID, title, releaseDate, totalLikes, userLikes
+    FROM Song LEFT OUTER JOIN (
+        SELECT songID, count(songID) as totalLikes, SUM(CASE WHEN SongLike.username=? THEN 1 ELSE 0 END) as userLikes
+        FROM SongLike
+        GROUP BY songID
+    ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
+    WHERE title LIKE CONCAT('%', ?, '%');`
+    var val= [username, songTitle];
+    var sql = mysql.format(query, val);
+    return sql;
+  } else {
+    const query = `SELECT Song.songID as songID, title, releaseDate, totalLikes, userLikes
+    FROM Song LEFT OUTER JOIN (
+        SELECT songID, count(songID) as totalLikes, SUM(CASE WHEN SongLike.username='${username}' THEN 1 ELSE 0 END) as userLikes
+        FROM SongLike
+        GROUP BY songID
+    ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
+    LIMIT 30`
+    var val= [username];
+    var sql = mysql.format(query, val);
+    return sql;
+  }
+}
+
 //TODO: prepare this statement
 // Search for a song title
 app.post("/search-song-title", (req, res) => {
   const songTitle = req.body?.songTitle
   const username = req.body?.username
 
-  const query = (songTitle) ? 
-  `SELECT Song.songID as songID, title, releaseDate, totalLikes, userLikes
-  FROM Song LEFT OUTER JOIN (
-      SELECT songID, count(songID) as totalLikes, SUM(CASE WHEN SongLike.username='${username}' THEN 1 ELSE 0 END) as userLikes
-      FROM SongLike
-      GROUP BY songID
-  ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
-  WHERE title LIKE '%${songTitle}%';` : 
-  `SELECT Song.songID as songID, title, releaseDate, totalLikes, userLikes
-  FROM Song LEFT OUTER JOIN (
-      SELECT songID, count(songID) as totalLikes, SUM(CASE WHEN SongLike.username='${username}' THEN 1 ELSE 0 END) as userLikes
-      FROM SongLike
-      GROUP BY songID
-  ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
-  LIMIT 30`;
+  const sql = makeSongQuery(songTitle, username)
+  
   con.query(
-    query,
+    sql,
     function (err, result, fields) {
       if (err) throw err;
       res.send({ result })
@@ -161,6 +174,7 @@ app.post("/make-new-user", (req, res) => {
   bcrypt.genSalt(saltRounds, function(err, salt){
     bcrypt.hash(givenPassword, salt, function(err, hash){
       hashedPassword = hash  
+      console.log(hashedPassword)
 
       var query = "INSERT INTO User VALUES (?, ?)";
       var val= [givenUsername, hashedPassword];
