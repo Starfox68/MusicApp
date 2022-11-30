@@ -75,19 +75,23 @@ app.post("/search-song-title", (req, res) => {
   const username = req.body?.username
 
   const query = (songTitle) ? 
-  `SELECT Song.songID as songID, title, releaseDate, totalLikes, userLikes
+  `SELECT t.songID, title, releaseDate, totalLikes, userLikes, Artist.name
+  FROM (SELECT Song.songID as songID, title, releaseDate, totalLikes, userLikes
   FROM Song LEFT OUTER JOIN (
       SELECT songID, count(songID) as totalLikes, SUM(CASE WHEN SongLike.username='${username}' THEN 1 ELSE 0 END) as userLikes
       FROM SongLike
       GROUP BY songID
   ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
-  WHERE title LIKE '%${songTitle}%';` : 
-  `SELECT Song.songID as songID, title, releaseDate, totalLikes, userLikes
+  WHERE title LIKE '%${songTitle}%') as t, SongAuthor, Artist
+  WHERE t.songID = SongAuthor.songID AND SongAuthor.artistID = Artist.artistID;` : 
+  `SELECT t.songID, title, releaseDate, totalLikes, userLikes, Artist.name
+  FROM (SELECT Song.songID as songID, title, releaseDate, totalLikes, userLikes
   FROM Song LEFT OUTER JOIN (
       SELECT songID, count(songID) as totalLikes, SUM(CASE WHEN SongLike.username='${username}' THEN 1 ELSE 0 END) as userLikes
       FROM SongLike
       GROUP BY songID
-  ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
+  ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID) as t, SongAuthor, Artist
+  WHERE t.songID = SongAuthor.songID AND SongAuthor.artistID = Artist.artistID
   LIMIT 100`;  
   con.query(
     query,

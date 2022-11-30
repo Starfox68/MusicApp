@@ -10,7 +10,7 @@ import { Add } from '@mui/icons-material';
 import CloseIcon from '@mui/icons-material/Close';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 
-function SongBar({songID, title, releaseDate, likes, username, userLikes}){
+function SongBar({songID, title, releaseDate, likes, username, userLikes, artistName}){
 
   const secondaryActionStyle = {
     margin: '0 auto',
@@ -67,9 +67,12 @@ function SongBar({songID, title, releaseDate, likes, username, userLikes}){
     })
   }
 
+  artistName = artistName.slice(0,-1)
+
   const toYoutube = async () => {
-    const searchText = String(title) + ' lyrics'
+    const searchText = String(title) + ' ' + String(artistName) + ' lyrics'
     const encodedTitle = encodeURIComponent(searchText.trim())
+    console.log('https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=' + encodedTitle + '&key=AIzaSyBdo7yrDURXX8hMMX2nBTUJQb9CbDPhAdU')
     axios.get('https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=' + encodedTitle + '&key=AIzaSyBdo7yrDURXX8hMMX2nBTUJQb9CbDPhAdU')
     .then((response) => {
       const url = 'https://youtube.com/watch?v=' + String(response.data.items[0].id.videoId)
@@ -97,7 +100,7 @@ function SongBar({songID, title, releaseDate, likes, username, userLikes}){
 
   return (
     <ListItem sx={{borderBottom: 1}}>
-      <ListItemText primary={title} secondary={"Released: " + releaseDate}/>
+      <ListItemText primary={title} secondary={"Released: " + releaseDate + " by Artist: " + artistName}/>
       <ListItemSecondaryAction >
         <Grid direction="row" alignItems="center" justifyContent="center" container>
           <Fade in={isPlaylistMenuOpen}>
