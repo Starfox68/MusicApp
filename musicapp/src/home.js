@@ -36,6 +36,7 @@ function Home(){
       songTitle: searchText,
       username: username
     }).then((response) => {
+      // console.log(response)
       const body = response.data;
       allSongs.length = 0
 
@@ -49,7 +50,8 @@ function Home(){
           releaseDate={song.releaseDate} 
           likes={(song.totalLikes) ? song.totalLikes : 0} 
           username={username}
-          userLikes={(song.userLikes === 1) ? true : false}>
+          userLikes={(song.userLikes === 1) ? true : false}
+          artistName={song.name}>
         </SongBar>)
       )
     })
