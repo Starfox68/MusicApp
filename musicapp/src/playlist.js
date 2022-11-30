@@ -3,7 +3,7 @@ import './App.css';
 import PlaylistBar from './playlistBar';
 import axios from 'axios';
 import List from '@mui/material/List';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import ResponsiveAppBar from './navBar';
 
@@ -41,6 +41,7 @@ function Playlist() {
 
       setPlaylists(body.result.map((playlist) =>
         <PlaylistBar
+          key = {playlist.playlistID}
           username = {username}
           playlistID = {playlist.playlistID}
           date = {playlist.dateCreated}

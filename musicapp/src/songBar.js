@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import Typography from '@mui/material/Typography';
-import ToggleButton from '@mui/material/ToggleButton';
 import axios from 'axios';
-import { MenuItem, Grid, ListItem, ListItemSecondaryAction, ListItemText, Divider, Select, Fade, IconButton, InputLabel } from '@mui/material';
+import { Typography, MenuItem, Grid, ListItem, ListItemSecondaryAction, ListItemText, Divider, Select, Fade, IconButton } from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
-import { Add } from '@mui/icons-material';
+import Add from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 
@@ -130,8 +128,8 @@ function SongBar({songID, title, releaseDate, likes, username, userLikes}){
             onClick={onLike}>
             {liked ? <ThumbUpIcon/> : <ThumbUpOffAltIcon/>}
           </IconButton>
-          <IconButton>
-          <PlayCircleIcon onClick={toYoutube} />
+          <IconButton onClick={toYoutube} >
+          <PlayCircleIcon/>
           </IconButton>
         </Grid>
       </ListItemSecondaryAction>
