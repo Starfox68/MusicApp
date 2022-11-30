@@ -81,3 +81,6 @@ CREATE TABLE PlaylistSong (
     FOREIGN KEY (username, playlistID) REFERENCES Playlist(username, playlistID) ON DELETE CASCADE,
     FOREIGN KEY (songID) REFERENCES Song(songID)
 );
+
+CREATE INDEX SongLikeIndex ON SongLike(songID, username);
+CREATE INDEX SongTitleIndex ON Song(title);

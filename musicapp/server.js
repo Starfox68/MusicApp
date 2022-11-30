@@ -80,7 +80,7 @@ app.post("/search-song-title", (req, res) => {
       FROM SongLike
       GROUP BY songID
   ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
-  LIMIT 100`;  
+  LIMIT 30`;
   con.query(
     query,
     function (err, result, fields) {

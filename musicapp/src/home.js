@@ -5,7 +5,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import TextField from '@mui/material/TextField';
 import SongBar from './songBar';
 import axios from 'axios';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Grid, List } from '@mui/material';
 import ResponsiveAppBar from './navBar';
 
@@ -14,22 +14,43 @@ function Home(){
 
   // State Variables
   const [allSongs, setAllSongs] = useState([]);
-  const [displayedSongs, setDisplayedSongs] = useState([]);
   const [sorted, setSorted] = useState(false);
   const [searchText, setSearchText] = useState('');
 
   const {state} = useLocation();
   const {username} = state;
-  const navigate = useNavigate();
   
   // Load all songs on first page load
   useEffect(() => {
     songTitleSearch() 
   }, []);
 
-  const navigateToPlaylists = async() => {
-    navigate('/playlists', {state: {username: username}})
-  }
+  const onSort = async () => {
+    axios.post('http://localhost:5001/search-song-title', {
+      songTitle: searchText,
+      username: username
+    }).then((response) => {
+      var body = response.data;
+      if (!sorted) {
+        body.result.sort((song1, song2) => song2.totalLikes - song1.totalLikes)
+      }
+      
+      setAllSongs([])
+
+      setAllSongs(body.result.map((song) =>
+        <SongBar key={song.songID}
+          songID={song.songID}
+          title={song.title} 
+          releaseDate={song.releaseDate} 
+          likes={(song.totalLikes) ? song.totalLikes : 0} 
+          username={username}
+          userLikes={(song.userLikes === 1) ? true : false}
+          artistName={song.name}>
+        </SongBar>)
+      )
+      setSorted(!sorted)
+    })
+  };
 
   const songTitleSearch = async () => {
     axios.post('http://localhost:5001/search-song-title', {
@@ -37,13 +58,11 @@ function Home(){
       username: username
     }).then((response) => {
       const body = response.data;
-      allSongs.length = 0
 
-      const temp = []
-      setAllSongs(temp)
+      setAllSongs([])
 
       setAllSongs(body.result.map((song) =>
-        <SongBar 
+        <SongBar key={song.songID}
           songID={song.songID}
           title={song.title} 
           releaseDate={song.releaseDate} 
@@ -70,17 +89,14 @@ function Home(){
       </Grid>
       <h1>Songs:</h1>
       <ToggleButton 
+        value="sorted"
         variant="outlined" 
         selected={sorted}
-        onChange={() => {
-          setSorted(!sorted)
-          setDisplayedSongs(allSongs.slice(0).sort((s1, s2) => s2.props.likes - s1.props.likes))
-        }}>
+        onChange={onSort}>
           sort
       </ToggleButton>
       <List>
-      {sorted === false && <div>{allSongs}</div>}
-      {sorted === true && <div>{displayedSongs}</div>}
+      {allSongs}
       </List>
     </div>
     </>
