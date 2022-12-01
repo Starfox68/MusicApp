@@ -261,9 +261,10 @@ app.post("/playlist-rename", (req, res) => {
 
 app.post("/playlist-create", (req, res) => {
   const username = req.body?.username
+  const name = req.body?.name
 
   con.query(
-    `INSERT INTO Playlist VALUES('${username}', UUID(), 'New Playlist', curdate())`,
+    `INSERT INTO Playlist VALUES('${username}', UUID(), '${name}', curdate())`,
     function (err, result, fields) {
       if (err) throw err;
       res.send({ result })
