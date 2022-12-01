@@ -16,11 +16,17 @@ const navTo = (param) => {
       navigate('/home', {state: {username: uname}})
     }
     //TODO: Add when we have a users page
-    if (param == "Users"){
+    if (param === "Users"){
         navigate('/users', {state: {username: uname}})
     }
     if (param === "Playlists"){
       navigate('/playlists', {state: {username: uname}})
+    }
+    if (param === "Artists") {
+      navigate('/artists', {state: {username: uname}})
+    } 
+    if (param === "Albums") {
+      navigate('/albums', {state: {username: uname}})
     }
 }
 
@@ -32,6 +38,8 @@ const navTo = (param) => {
             <Button key="Home" onClick={() => navTo('Home')} sx={{ my: 2, color: 'white', display: 'block' }}>Home</Button>
             <Button key="Users" onClick={() => navTo('Users')} sx={{ my: 2, color: 'white', display: 'block' }}>Users</Button>
             <Button key="Playlists" onClick={() => navTo('Playlists')} sx={{ my: 2, color: 'white', display: 'block' }}>Playlists</Button>
+            <Button key="Artists" onClick={() => navTo('Artists')} sx={{ my: 2, color: 'white', display: 'block' }}>Artists</Button>
+            <Button key="Albums" onClick={() => navTo('Albums')} sx={{ my: 2, color: 'white', display: 'block' }}>Albums</Button>
           </Box>
         </Toolbar>
       </Container>
