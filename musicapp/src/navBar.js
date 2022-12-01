@@ -28,6 +28,9 @@ const navTo = (param) => {
     if (param === "Albums") {
       navigate('/albums', {state: {username: uname}})
     }
+    if (param === "LogOut"){
+      navigate('/')
+    }
 }
 
   return (
@@ -41,6 +44,8 @@ const navTo = (param) => {
             <Button key="Artists" onClick={() => navTo('Artists')} sx={{ my: 2, color: 'white', display: 'block' }}>Artists</Button>
             <Button key="Albums" onClick={() => navTo('Albums')} sx={{ my: 2, color: 'white', display: 'block' }}>Albums</Button>
           </Box>
+          <Button key="LogOut" onClick={() => navTo('LogOut')} sx={{ my: 2, color: 'white', display: 'block' }} style={{float: 'right'}}>LogOut</Button>
+
         </Toolbar>
       </Container>
     </AppBar>
