@@ -26,9 +26,12 @@ In this same terminal window, now run `node server.js`
 In a new terminal tab in the musicapp folder run `npm start`
 
 # Features
-1. Logging in / creating users. A default user exists with username: user1 password: password1
+1. Logging in / creating users. An example user is username: user1 password: password1
 2. Searching for songs by song title
 3. Liking songs and viewing total song likes from other users
 4. Sorting songs by song likes
-
-The features are primarily implemented in /musicapp/src. home.js, loginScreen.js, User.js, and songBar.js contain the front end code for most features, and server.js in /musicapp contains the backend code and sql queries for the features
+5. Creating, renaming, and deleting playlists
+6. Adding songs to playlists
+7. Viewing other users and their mutually liked songs
+8. Searching for artists and sorting by an artist's total likes
+9. Searching for albums, liking albums, and sorting 
