@@ -354,3 +354,150 @@ app.post("/mutual-song-likes-get", (req, res) => {
     }
   );
 });
+
+// Search for artists
+app.post("/search-artist", (req, res) => {
+  const artistName = req.body?.artistName
+  const username = req.body?.username
+
+  const query = (artistName) ? 
+  `WITH artistLikes as (
+    SELECT artistID, count(songlike.songID) as artistSongLikes
+    FROM songauthor
+    LEFT OUTER JOIN songlike ON songauthor.songID=songlike.songID
+    GROUP BY artistID
+    )
+    SELECT artist.artistID, name, artistSongLikes FROM artistLikes, artist WHERE artistLikes.artistID = artist.artistID and name LIKE '%${artistName}%' LIMIT 50;` : 
+  `WITH artistLikes as (
+    SELECT artistID, count(songlike.songID) as artistSongLikes
+    FROM songauthor
+    LEFT OUTER JOIN songlike ON songauthor.songID=songlike.songID
+    GROUP BY artistID
+    )
+    SELECT artist.artistID, name, artistSongLikes FROM artistLikes, artist WHERE artistLikes.artistID = artist.artistID LIMIT 50`;  
+
+  con.query(
+    query,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+});
+
+app.post("/artist-songs-get", (req, res) => {
+  const artistID = req.body?.artistID
+  const username = req.body?.username
+
+  con.query(
+    `WITH artistSong as 
+    ( SELECT Song.songID, title, releaseDate FROM Song, SongAuthor
+      WHERE artistID = "${artistID}" AND Song.songID=SongAuthor.songID)
+
+    SELECT artistSong.songID as songID, title, releaseDate, totalLikes, userLikes
+    FROM artistSong LEFT OUTER JOIN (
+        SELECT songID, count(songID) as totalLikes, SUM(CASE WHEN SongLike.username='${username}' THEN 1 ELSE 0 END) as userLikes
+        FROM SongLike
+        GROUP BY songID
+    ) AS SongLikeTotals ON artistSong.songID = SongLikeTotals.songID`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+});
+
+// Search album name
+app.post("/search-album-name", (req, res) => {
+  const albumName = req.body?.albumName
+  const username = req.body?.username
+
+  const query = (albumName) ? 
+  `SELECT Album.albumID as albumID, name, totalLikes, userLikes
+  FROM Album LEFT OUTER JOIN (
+      SELECT albumID, count(albumID) as totalLikes, SUM(CASE WHEN AlbumLike.username='${username}' THEN 1 ELSE 0 END) as userLikes
+      FROM AlbumLike
+      GROUP BY albumID
+  ) AS AlbumLikeTotals ON Album.AlbumID = AlbumLikeTotals.AlbumID
+  WHERE name LIKE '%${albumName}%' LIMIT 50;` : 
+  `SELECT Album.albumID as albumID, name, totalLikes, userLikes
+  FROM Album LEFT OUTER JOIN (
+      SELECT albumID, count(albumID) as totalLikes, SUM(CASE WHEN AlbumLike.username='${username}' THEN 1 ELSE 0 END) as userLikes
+      FROM AlbumLike
+      GROUP BY albumID
+  ) AS AlbumLikeTotals ON Album.albumID = AlbumLikeTotals.albumID
+  LIMIT 50`;  
+  con.query(
+    query,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+});
+
+app.post("/get-album-likes", (req, res) => {
+  const albumID = req.body?.albumID
+
+  con.query(
+    `SELECT COUNT(*) AS totalLikes FROM AlbumLike WHERE albumID='${albumID}'`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  )
+})
+
+// Like/unlike an album
+app.post("/like-album", (req, res) => {
+  const albumID = req.body?.albumID
+  const username = req.body?.username
+  const liked = req.body?.selected
+
+  const query = (liked) ?
+  `INSERT INTO AlbumLike VALUES(${albumID}, '${username}')` :
+  `DELETE FROM AlbumLike WHERE AlbumLike.albumID = ${albumID} AND AlbumLike.username = '${username}'`;
+
+  con.query(
+    query,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+});
+
+app.post("/album-songs-get", (req, res) => {
+  const albumID = req.body?.albumID
+  const username = req.body?.username
+  
+  con.query(
+    `WITH albumSong as 
+    ( SELECT Song.songID, title, releaseDate FROM Song, SongAlbum
+      WHERE albumID = "${albumID}" AND Song.songID=SongAlbum.songID)
+
+    SELECT albumSong.songID as songID, title, releaseDate, totalLikes, userLikes
+    FROM albumSong LEFT OUTER JOIN (
+        SELECT songID, count(songID) as totalLikes, SUM(CASE WHEN SongLike.username='${username}' THEN 1 ELSE 0 END) as userLikes
+        FROM SongLike
+        GROUP BY songID
+    ) AS SongLikeTotals ON albumSong.songID = SongLikeTotals.songID`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  );
+});
+
+app.post("/artist-song-likes-get", (req, res) => {
+  const artistID = req.body?.artistID
+
+  con.query(
+    `SELECT COUNT(*) AS totalLikes FROM SongLike WHERE songID in 
+      (SELECT DISTINCT SongID from SongAuthor where artistID="${artistID}");`,
+    function (err, result, fields) {
+      if (err) throw err;
+      res.send({ result })
+    }
+  )
+})
