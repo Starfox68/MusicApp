@@ -48,14 +48,14 @@ function ArtistBar({artistID, name, username, totalLikes}) {
     }).then((response) => {
       const body = response.data;
       setSongs(body.result.map((song) =>
-        <SongBar key={song.songID}
+        <UserSongBar key={song.songID}
           songID={song.songID}
           title={song.title} 
           releaseDate={song.releaseDate} 
           likes={(song.totalLikes) ? song.totalLikes : 0} 
           username={username}
           userLikes={(song.userLikes === 1) ? true : false}>
-        </SongBar>
+        </UserSongBar>
         )
       )
 

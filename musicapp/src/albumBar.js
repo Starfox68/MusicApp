@@ -7,6 +7,7 @@ import { MenuItem, Grid, ListItem, ListItemSecondaryAction, ListItemText, Divide
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import SongBar from './songBar';
+import UserSongBar from './userSongBar';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
@@ -72,17 +73,16 @@ function AlbumBar({albumID, name, likes, username, userLikes}){
     }).then((response) => {
       const body = response.data;
       setSongs(body.result.map((song) =>
-        <SongBar key={song.songID}
-          songID={song.songID}
-          title={song.title} 
-          releaseDate={song.releaseDate} 
-          likes={(song.totalLikes) ? song.totalLikes : 0} 
-          username={username}
-          userLikes={(song.userLikes === 1) ? true : false}>
-        </SongBar>
+        <UserSongBar key={song.songID}
+        songID={song.songID}
+        title={song.title} 
+        releaseDate={song.releaseDate} 
+        likes={(song.totalLikes) ? song.totalLikes : 0} 
+        username={username}
+        userLikes={(song.userLikes === 1) ? true : false}>
+        </UserSongBar>
         )
       )
-
     })
   };
 
