@@ -1,42 +1,17 @@
-/*
-const express = require("express");
-const { spawn } = require("child_process");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-var mysql = require("mysql");
-const app = express();
-app.use(cors());
-// parse application/json
-app.use(bodyParser.json());
-var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "Cheese1601",
-  database: "support",
-});
-//connect to database
-con.connect((err) => {
-  if (err) throw err;
-  console.log("Mysql Connected...");
-});
-app.listen(3001, () => {
-  console.log("Server running successfully on 3001");
-});
-*/
 
-const express = require('express'); //Line 1
+const express = require('express');
 const cors = require('cors')
-const app = express(); //Line 2
+const app = express();
 const bcrypt = require('bcrypt');
 
 app.use(cors())
 app.use(express.json())
 
-const port = process.env.PORT || 5001; //Line 3
+const port = process.env.PORT || 5001;
 var mysql = require("mysql");
 
 // This displays message that the server running and listening to specified port
-app.listen(port, () => console.log(`Listening on port ${port}`)); //Line 6
+app.listen(port, () => console.log(`Listening on port ${port}`));
 
 var con = mysql.createConnection({
     host: "localhost",
@@ -55,9 +30,9 @@ con.connect((err) => {
 const saltRounds = 10;
 
 // create a GET route
-app.get('/express_backend', (req, res) => { //Line 9
-  res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' }); //Line 10
-}); //Line 11
+app.get('/express_backend', (req, res) => {
+  res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' });
+});
 
 
 function makeSongQuery(songTitle, username) {
@@ -86,7 +61,6 @@ function makeSongQuery(songTitle, username) {
   }
 }
 
-//TODO: prepare this statement
 // Search for a song title
 app.post("/search-song-title", (req, res) => {
   const songTitle = req.body?.songTitle
@@ -134,7 +108,6 @@ app.post("/get-song-likes", (req, res) => {
   )
 })
 
-//prepared statement
 // Verify username and password
 app.post("/check-login", (req, res) => {
   const givenUsername = req.body?.username
@@ -144,7 +117,6 @@ app.post("/check-login", (req, res) => {
   var val= [givenUsername];
   var sql = mysql.format(query, val);
 
-  // User VALUES ("user1", "password1");
   con.query(sql, function (err, result, fields) {
       if (err) throw err;
 
@@ -163,7 +135,6 @@ app.post("/check-login", (req, res) => {
   );
 });
 
-//prepared statement
 //Create new username and password
 app.post("/make-new-user", (req, res) => {
   const givenUsername = req.body?.username
@@ -179,7 +150,6 @@ app.post("/make-new-user", (req, res) => {
       var val= [givenUsername, hashedPassword];
       var sql = mysql.format(query, val);
 
-      // INSERT INTO User VALUES ("user1", "password1");
       con.query(sql,
         function (err, result, fields) {
           if (err) res.send("ERROR");
