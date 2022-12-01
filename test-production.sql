@@ -1,7 +1,7 @@
 USE music
 
 -- feature 1
-EXPLAIN ANALYZE SELECT title, releaseDate, TotalLikes, UserLikes
+SELECT title, releaseDate, TotalLikes, UserLikes
 FROM Song LEFT OUTER JOIN (
     SELECT songID, count(songID) as TotalLikes, SUM(CASE WHEN SongLike.username="user1" THEN 1 ELSE 0 END) as UserLikes
     FROM SongLike
@@ -10,7 +10,7 @@ FROM Song LEFT OUTER JOIN (
 WHERE MATCH (title) AGAINST(CONCAT('Danger', '*') IN BOOLEAN MODE);
 
 -- feature 2
-EXPLAIN ANALYZE SELECT artistID, count(SongLike.songID) as artistSongLikes
+SELECT artistID, count(SongLike.songID) as artistSongLikes
 FROM SongAuthor LEFT OUTER JOIN SongLike ON SongAuthor.songID=SongLike.songID
 GROUP BY artistID
 ORDER BY artistSongLikes DESC

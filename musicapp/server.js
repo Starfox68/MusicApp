@@ -174,7 +174,6 @@ app.post("/make-new-user", (req, res) => {
   bcrypt.genSalt(saltRounds, function(err, salt){
     bcrypt.hash(givenPassword, salt, function(err, hash){
       hashedPassword = hash  
-      console.log(hashedPassword)
 
       var query = "INSERT INTO User VALUES (?, ?)";
       var val= [givenUsername, hashedPassword];
