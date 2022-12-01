@@ -62,6 +62,7 @@ function Playlist() {
           refreshPlaylistCallback = {refreshPlaylistCallback}
         />
       ))
+      
       if (callback) callback(body)
     })
   }
@@ -104,12 +105,16 @@ function Playlist() {
       })
 
     }
-    if (decodedUsername != username){ // make sure user can't share to themselves
-      createPlaylist("Imported Playlist from " + decodedUsername, callback)
-    }
-    else {
+    if (decodedUsername == username) {
       alert("Cannot import playlist from yourself")
     }
+    else if (decodedUsername === "" || decodedPlaylistID === "") {
+      alert("Invalid import code")
+    }
+    else { // make sure user can't share to themselves
+      createPlaylist("Imported Playlist from " + decodedUsername, callback)
+    }
+
     
     
 
