@@ -1,11 +1,12 @@
 Database changed
-+-----------------+-------------+------------+-----------+
-| title           | releaseDate | TotalLikes | UserLikes |
-+-----------------+-------------+------------+-----------+
-| Dangerous       | 2014-08-19  |       NULL |      NULL |
-| Dangerous Times | 2013-03-05  |       NULL |      NULL |
-+-----------------+-------------+------------+-----------+
-2 rows in set (0.00 sec)
++-------------------------+-------------+------------+-----------+
+| title                   | releaseDate | TotalLikes | UserLikes |
++-------------------------+-------------+------------+-----------+
+| All Of Us Are In Danger |             |       NULL |      NULL |
+| Dangerous               | 2014-08-19  |       NULL |      NULL |
+| Dangerous Times         | 2013-03-05  |       NULL |      NULL |
++-------------------------+-------------+------------+-----------+
+3 rows in set (0.00 sec)
 
 +----------+-----------------+
 | artistID | artistSongLikes |

@@ -83,4 +83,4 @@ CREATE TABLE PlaylistSong (
 );
 
 CREATE INDEX SongLikeIndex ON SongLike(songID, username);
-CREATE INDEX SongTitleIndex ON Song(title);
+CREATE FULLTEXT INDEX SongSearchIndex ON Song(title)

@@ -68,7 +68,7 @@ function makeSongQuery(songTitle, username) {
         FROM SongLike
         GROUP BY songID
     ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
-    WHERE title LIKE CONCAT('%', ?, '%');`
+    WHERE MATCH (title) AGAINST(CONCAT(?, '*') IN BOOLEAN MODE);`
     var val= [username, songTitle];
     var sql = mysql.format(query, val);
     return sql;
@@ -79,7 +79,7 @@ function makeSongQuery(songTitle, username) {
         FROM SongLike
         GROUP BY songID
     ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
-    LIMIT 30`
+    LIMIT 30;`
     var val= [username];
     var sql = mysql.format(query, val);
     return sql;

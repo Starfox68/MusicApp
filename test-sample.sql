@@ -7,7 +7,7 @@ FROM Song LEFT OUTER JOIN (
     FROM SongLike
     GROUP BY songID
 ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
-WHERE title LIKE '%Despacito%';
+WHERE MATCH (title) AGAINST(CONCAT('Despacito', '*') IN BOOLEAN MODE);
 
 -- feature 2
 SELECT artistID, count(songlike.songID) as artistSongLikes

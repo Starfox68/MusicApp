@@ -1,16 +1,16 @@
 USE music
 
 -- feature 1
-SELECT title, releaseDate, TotalLikes, UserLikes
+EXPLAIN ANALYZE SELECT title, releaseDate, TotalLikes, UserLikes
 FROM Song LEFT OUTER JOIN (
     SELECT songID, count(songID) as TotalLikes, SUM(CASE WHEN SongLike.username="user1" THEN 1 ELSE 0 END) as UserLikes
     FROM SongLike
     GROUP BY songID
 ) AS SongLikeTotals ON Song.songID = SongLikeTotals.songID
-WHERE title LIKE '%Dangerous%';
+WHERE MATCH (title) AGAINST(CONCAT('Danger', '*') IN BOOLEAN MODE);
 
 -- feature 2
-SELECT artistID, count(SongLike.songID) as artistSongLikes
+EXPLAIN ANALYZE SELECT artistID, count(SongLike.songID) as artistSongLikes
 FROM SongAuthor LEFT OUTER JOIN SongLike ON SongAuthor.songID=SongLike.songID
 GROUP BY artistID
 ORDER BY artistSongLikes DESC
