@@ -418,7 +418,8 @@ app.post("/search-album-name", (req, res) => {
       FROM AlbumLike
       GROUP BY albumID
   ) AS AlbumLikeTotals ON Album.AlbumID = AlbumLikeTotals.AlbumID
-  WHERE name LIKE '%${albumName}%' LIMIT 50;` : 
+  WHERE MATCH (name) AGAINST(CONCAT('${albumName}', '*') IN BOOLEAN MODE) 
+  LIMIT 50;` : 
   `SELECT Album.albumID as albumID, name, totalLikes, userLikes
   FROM Album LEFT OUTER JOIN (
       SELECT albumID, count(albumID) as totalLikes, SUM(CASE WHEN AlbumLike.username='${username}' THEN 1 ELSE 0 END) as userLikes
